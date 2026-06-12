@@ -52,16 +52,17 @@
         #map {
             z-index: 10;
         }
-        /* PDF Baskı Stilleri */
+        /* PDF Sayfa Boyutları ve Sınırları */
         .pdf-page {
             box-sizing: border-box;
             width: 210mm;
-            min-height: 297mm;
+            height: 297mm;
             padding: 15mm;
             margin: 0 auto;
             background: #ffffff;
             color: #1e293b;
             page-break-after: always;
+            position: relative;
         }
         .pdf-page:last-child {
             page-break-after: avoid;
@@ -160,10 +161,9 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                        <!-- Harita Koordinat Girişleri -->
                         <div class="md:col-span-4 flex flex-col gap-3 justify-center">
                             <p class="text-xs text-slate-500">
-                                Harita üzerindeki kırmızı pin lokasyonunu değiştirebilir veya aşağıdaki ondalık derece (WGS84) koordinatlarını manuel düzenleyebilirsiniz:
+                                Harita üzerindeki pini sürükleyebilir veya enlem/boylam değerlerini düzenleyebilirsiniz:
                             </p>
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">ENLEM (LATITUDE)</label>
@@ -280,7 +280,7 @@
                         </button>
                     </div>
 
-                    <!-- Teçhiz Kartı (Filtre Odaklı) -->
+                    <!-- Teçhiz Kartı -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
@@ -317,7 +317,7 @@
                             <button onclick="processFiltersOnly()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow">
                                 <i class="fa-solid fa-list-ol"></i> Filtreleri İşle
                             </button>
-                            <button onclick="autoGenerateBoringDesign()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow" title="Tüm borulamayı filtrelerin arasına kapalı koyarak otomatik tasarlar">
+                            <button onclick="autoGenerateBoringDesign()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i> Boruları Dizayn Et
                             </button>
                         </div>
@@ -418,7 +418,7 @@
 
         </div>
 
-        <!-- Dev Export Butonu -->
+        <!-- Dev Export PDF Butonu -->
         <div class="mt-6">
             <button onclick="exportToPDF()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold text-base md:text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3">
                 <i class="fa-solid fa-file-pdf text-2xl"></i>
@@ -427,8 +427,8 @@
         </div>
     </main>
 
-    <!-- HIDDEN PRINT AREA FOR A4 EXPORT (Milimetrik Tasarım) -->
-    <div class="hidden">
+    <!-- HIDDEN BUT ACTIVE PRINT AREA FOR A4 EXPORT (EKRAN DIŞINDA RENDER EDİLİR) -->
+    <div style="position: absolute; left: -9999px; top: -9999px; width: 210mm;">
         <div id="print-pdf-wrapper" style="width: 210mm; background-color: #ffffff;">
             
             <!-- Sayfa 1 -->
@@ -509,7 +509,6 @@
                     <div class="border border-slate-300 rounded p-2.5 flex flex-col justify-between bg-slate-50">
                         <span class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Kuyu Lokasyon Krokisi (Coğrafi Konum)</span>
                         <div id="pdf_map_image_container" class="w-full h-36 bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-200">
-                            <!-- Anlık Harita Snapshot Görseli buraya enjekte edilecek -->
                             <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Kuyu Harita Krokisi">
                         </div>
                     </div>
@@ -538,20 +537,19 @@
 
             <!-- Sayfa 2 -->
             <div class="pdf-page">
-                <!-- Page 2 Header/Content -->
                 <div class="border-b-2 border-slate-400 pb-2 mb-4 flex justify-between items-center">
                     <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Sondaj Jeoloji Logu & Teçhiz Tasarım Şeması</span>
                     <span class="text-[9px] text-slate-500 font-mono" id="pdf_page_date">Tarih: 12.06.2026</span>
                 </div>
 
                 <div class="grid grid-cols-12 gap-5">
-                    <!-- Graphical Canvas Section -->
+                    <!-- Kuyu Logu Grafik Alanı (Canvas'tan gelen net resim buraya oturur) -->
                     <div class="col-span-5 border border-slate-300 rounded p-2.5 bg-slate-900 flex flex-col items-center justify-center">
                         <span class="text-[9px] font-bold text-blue-400 mb-1.5 uppercase tracking-wider">Grafik Kuyu Profili ve Kesiti</span>
-                        <img id="pdf_canvas_img" src="" class="border border-slate-950 rounded w-full max-h-[580px]" alt="Kuyu Şeması">
+                        <img id="pdf_canvas_img" src="" class="border border-slate-950 rounded w-full max-h-[580px] object-contain" alt="Kuyu Şeması">
                     </div>
 
-                    <!-- Detailed Tables Section -->
+                    <!-- Detay Tabloları -->
                     <div class="col-span-7 flex flex-col justify-between">
                         <div>
                             <h3 class="text-[10px] font-bold text-amber-800 border-b border-slate-200 pb-1 mb-2 uppercase tracking-wide">3. Jeolojik Tabaka Detayları</h3>
@@ -584,7 +582,7 @@
                             </table>
                         </div>
 
-                        <!-- Mini Footer -->
+                        <!-- Alt Bilgi -->
                         <div class="mt-6 pt-4 border-t border-slate-200 text-center">
                             <p class="text-[8px] text-slate-400">
                                 GeoLog Pro® Yazılımı ile otomatik oluşturulmuştur. Tüm Hakları Saklıdır.
@@ -611,15 +609,15 @@
         let kuyuMarker;
         let isSatellite = true;
 
-        // Leaflet Altlıkları (Esri & OSM)
+        // Leaflet Harita Katmanları (Esri & OSM)
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
-            crossOrigin: true // CORS sorunlarını önlemek için kritik ayar
+            crossOrigin: true
         });
 
         const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap',
-            crossOrigin: true // CORS sorunlarını önlemek için kritik ayar
+            crossOrigin: true
         });
 
         const litColors = {
@@ -643,7 +641,7 @@
             'Serpantinit': '#0d9488'
         };
 
-        // Custom Toast Notification
+        // Bildirim Yardımcısı
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
             const iconSpan = document.getElementById('toastIcon');
@@ -693,7 +691,6 @@
             });
         }
 
-        // Girişlerden Haritayı Güncelle
         function updateMapFromInputs() {
             const lat = parseFloat(document.getElementById('p_lat').value);
             const lon = parseFloat(document.getElementById('p_lon').value);
@@ -994,7 +991,7 @@
             showToast("Hazır firma şablon verileri yüklendi.", "success");
         }
 
-        // TÜM 18 JEOLOJİK LİTOLOJİ İÇİN Vektörel Taramalar
+        // TÜM LİTOLOJİLER İÇİN VEKTÖREL TARAMALAR
         function createHatchPattern(ctx, type, color) {
             ctx.fillStyle = color;
             
@@ -1150,7 +1147,7 @@
             return ctx.createPattern(tempCanvas, 'repeat');
         }
 
-        // CANVAS PLOTTER
+        // CANVAS PLOTTER (Kuyu Log Çizim Ekranı)
         function drawCanvasLog() {
             const canvas = document.getElementById('logCanvas');
             const ctx = canvas.getContext('2d');
@@ -1162,11 +1159,9 @@
             const drawHeight = canvas.height - (padding * 2);
             const scale = drawHeight / totalDepth;
 
-            // Arka planı koyulaştır
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Kolon koordinatları
             const litoLeft = 45;
             const litoWidth = 100;
             const techLeft = 175;
@@ -1209,7 +1204,6 @@
             ctx.fillStyle = '#1e293b';
             ctx.fillRect(techLeft, padding, techWidth, drawHeight);
 
-            // Sondaj Çapı Sınırları
             ctx.strokeStyle = '#475569';
             ctx.lineWidth = 1;
             ctx.setLineDash([3, 3]);
@@ -1305,9 +1299,8 @@
             ctx.fillText("TEÇHİZ", techLeft + (techWidth/2), padding - 10);
         }
 
-        // LEAFLET CAN-CONVERT: Anlık haritayı (Uydu/Sokak) Base64'e dönüştürerek CORS sınırını aşma
+        // LEAFLET CAN-CONVERT (Harita Karolarını Birleştirip Base64 Resme Çevirme)
         function captureMapCanvas(callback) {
-            // Leaflet haritası içerisindeki canvas ve resim karolarını (tiles) birleştirip temiz bir resim üretir
             const mapContainer = document.getElementById('map');
             const tiles = mapContainer.querySelectorAll('.leaflet-tile-container img');
             const markerImg = mapContainer.querySelector('.leaflet-marker-icon');
@@ -1324,12 +1317,10 @@
             const totalTiles = tiles.length;
 
             if (totalTiles === 0) {
-                // Eğer karo yoksa fallback üret
                 callback(canvas.toDataURL('image/png'));
                 return;
             }
 
-            // Haritadaki tüm karoları canvas'a koordinatlarına göre çizeriz (CORS hatası almamak için her karoya crossOrigin atanmıştır)
             tiles.forEach(tile => {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
@@ -1355,7 +1346,6 @@
             });
         }
 
-        // Harita Krokisinin üzerine kırmızı hedef işaretleyicisini (pin) çizer
         function drawMarkerOnCapture(ctx, markerImg, mapContainer, callback, canvas) {
             if (markerImg) {
                 const markerRect = markerImg.getBoundingClientRect();
@@ -1363,7 +1353,6 @@
                 const mx = (markerRect.left - containerRect.left) + (markerRect.width / 2);
                 const my = (markerRect.top - containerRect.top) + (markerRect.height);
 
-                // Klasik Kırmızı Pin Çizimi
                 ctx.fillStyle = '#ef4444';
                 ctx.beginPath();
                 ctx.arc(mx, my - 20, 8, 0, Math.PI, true);
@@ -1371,13 +1360,11 @@
                 ctx.closePath();
                 ctx.fill();
 
-                // Pin içi beyaz halka
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
                 ctx.arc(mx, my - 20, 3, 0, 2 * Math.PI);
                 ctx.fill();
 
-                // Pin Altındaki Gölge/Hedef Halkası
                 ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
@@ -1387,7 +1374,19 @@
             callback(canvas.toDataURL('image/png'));
         }
 
-        // AKILLI VE GÜVENLİ PDF EXPORT SİSTEMİ
+        // ASENKRON RESİM YÜKLEME SÖZÜ (Görsellerin Belleğe Tam İndirilmesini Sağlar)
+        function imgLoadPromise(imgElement) {
+            return new Promise((resolve) => {
+                if (imgElement.complete && imgElement.naturalWidth !== 0) {
+                    resolve();
+                } else {
+                    imgElement.onload = () => resolve();
+                    imgElement.onerror = () => resolve(); // Hata olsa bile kilitlemeyi önle
+                }
+            });
+        }
+
+        // AKILLI VE KAYIPSIZ PDF EXPORT SİSTEMİ
         function exportToPDF() {
             if (lithologies.length === 0) {
                 showToast("Lütfen PDF kaydetmeden önce kuyu verilerini doldurun!", "error");
@@ -1426,16 +1425,10 @@
             
             document.getElementById('pdf_sig_eng_p1').innerText = document.getElementById('firm_engineer').value;
 
-            // Tarih Güncelleme
             const today = new Date();
             document.getElementById('pdf_page_date').innerText = "Tarih: " + today.toLocaleDateString('tr-TR');
 
-            // 2. Kuyu Logu Grafik Görüntüsünü Aktarma
-            const mainCanvas = document.getElementById('logCanvas');
-            const pdfCanvasImg = document.getElementById('pdf_canvas_img');
-            pdfCanvasImg.src = mainCanvas.toDataURL('image/png');
-
-            // 3. Jeolojik Tabaka Tablosunu Doldurma
+            // 2. Jeolojik Tabaka Tablosunu Doldurma
             const pdfLitoTbody = document.querySelector('#pdf_lito_table tbody');
             pdfLitoTbody.innerHTML = lithologies.map(l => `
                 <tr class="border-b border-slate-200">
@@ -1447,7 +1440,7 @@
                 </tr>
             `).join('');
 
-            // 4. Teçhiz Tasarım Tablosunu Doldurma
+            // 3. Teçhiz Tasarım Tablosunu Doldurma
             const pdfTechTbody = document.querySelector('#pdf_tech_table tbody');
             pdfTechTbody.innerHTML = techLayers.map(t => `
                 <tr class="border-b border-slate-200">
@@ -1457,29 +1450,40 @@
                 </tr>
             `).join('');
 
+            // 4. Kuyu Logu Grafik Görüntüsünü Aktarma
+            const mainCanvas = document.getElementById('logCanvas');
+            const pdfCanvasImg = document.getElementById('pdf_canvas_img');
+            pdfCanvasImg.src = mainCanvas.toDataURL('image/png');
+
             // 5. Haritayı Base64 Görüntüsüne Çevir ve PDF'e Bas
             captureMapCanvas(function(mapBase64) {
                 const pdfMapImg = document.getElementById('pdf_map_static_img');
                 pdfMapImg.src = mapBase64;
 
-                // PDF üretici kütüphaneyi (html2pdf) başlat
-                const element = document.getElementById('print-pdf-wrapper');
-                const kuyuSahibi = document.getElementById('p_client').value.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ ]/g, "").replace(/\s+/g, "_");
-                const filename = `Sondaj_Log_Raporu_${kuyuSahibi}.pdf`;
+                // Her iki görselin de tarayıcı tarafından belleğe yazılmasını bekle
+                Promise.all([
+                    imgLoadPromise(pdfCanvasImg),
+                    imgLoadPromise(pdfMapImg)
+                ]).then(() => {
+                    // PDF oluşturucu kütüphaneyi (html2pdf) başlat
+                    const element = document.getElementById('print-pdf-wrapper');
+                    const kuyuSahibi = document.getElementById('p_client').value.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ ]/g, "").replace(/\s+/g, "_");
+                    const filename = `Sondaj_Log_Raporu_${kuyuSahibi}.pdf`;
 
-                const opt = {
-                    margin:       [0, 0, 0, 0],
-                    filename:     filename,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
+                    const opt = {
+                        margin:       [0, 0, 0, 0],
+                        filename:     filename,
+                        image:        { type: 'jpeg', quality: 0.98 },
+                        html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
+                        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
 
-                html2pdf().set(opt).from(element).save().then(() => {
-                    showToast("Profesyonel PDF Raporu başarıyla indirildi.", "success");
-                }).catch(err => {
-                    console.error(err);
-                    showToast("PDF üretilirken bir hata oluştu!", "error");
+                    html2pdf().set(opt).from(element).save().then(() => {
+                        showToast("Profesyonel PDF Raporu başarıyla indirildi.", "success");
+                    }).catch(err => {
+                        console.error(err);
+                        showToast("PDF üretilirken bir hata oluştu!", "error");
+                    });
                 });
             });
         }
