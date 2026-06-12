@@ -52,16 +52,18 @@
         #map {
             z-index: 10;
         }
-        /* PDF Sayfa Boyutları ve Sınırları */
+        /* PDF Sayfa Boyutları ve Sınırları - A4 Milimetrik Koruma */
         .pdf-page {
             box-sizing: border-box;
             width: 210mm;
-            height: 297mm;
-            padding: 15mm;
+            height: 295mm;
+            max-height: 295mm;
+            padding: 12mm 15mm;
             margin: 0 auto;
             background: #ffffff;
             color: #1e293b;
             page-break-after: always;
+            overflow: hidden;
             position: relative;
         }
         .pdf-page:last-child {
@@ -332,7 +334,7 @@
                             <i class="fa-solid fa-clipboard-list text-slate-700"></i>
                             <h3 class="font-bold text-sm text-slate-800">Kuyu İnşaat ve Jeoloji Veri Cetvelleri</h3>
                         </div>
-                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold">Veri Giriş Paneli</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold">Veri Giriş Paneleni</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -427,163 +429,168 @@
         </div>
     </main>
 
-    <!-- HIDDEN BUT ACTIVE PRINT AREA FOR A4 EXPORT (EKRAN DIŞINDA RENDER EDİLİR) -->
-    <div style="position: absolute; left: -9999px; top: -9999px; width: 210mm;">
+    <!-- HIDDEN BUT ACTIVE PRINT AREA FOR A4 EXPORT (EKRAN DIŞINDA MUHAFAZA EDİLİR VE ENJEKTE EDİLİR) -->
+    <div style="position: absolute; left: -9999px; top: -9999px; width: 210mm; z-index: -100;">
         <div id="print-pdf-wrapper" style="width: 210mm; background-color: #ffffff;">
             
-            <!-- Sayfa 1 -->
+            <!-- Sayfa 1: Proje Künyesi, Pompa Deneyi ve Harita Krokisi -->
             <div class="pdf-page">
                 <!-- Page 1 Header -->
-                <div class="border-b-4 border-slate-800 pb-4 mb-5 flex justify-between items-start">
+                <div class="border-b-4 border-slate-800 pb-3 mb-4 flex justify-between items-start">
                     <div>
-                        <h1 id="pdf_firm_name" class="text-lg font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
-                        <p class="text-[10px] text-slate-500 font-semibold tracking-wider">RESMİ SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOGU</p>
+                        <h1 id="pdf_firm_name" class="text-base font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
+                        <p class="text-[9px] text-slate-500 font-semibold tracking-wider">RESMİ SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK RAPORU</p>
                     </div>
                     <div class="text-right">
-                        <span class="text-[10px] bg-blue-100 text-blue-800 px-3 py-1 rounded font-bold uppercase tracking-wider" id="pdf_kuyu_amaci">SULAMA SUYU</span>
+                        <span class="text-[9px] bg-blue-100 text-blue-800 px-3 py-1 rounded font-bold uppercase tracking-wider" id="pdf_kuyu_amaci">SULAMA SUYU</span>
                     </div>
                 </div>
 
                 <!-- Core Metadata Grid -->
-                <h2 class="text-xs font-bold text-blue-800 border-b border-slate-200 pb-1 mb-2.5 uppercase tracking-wide">1. Genel Proje ve Ruhsat Künyesi</h2>
-                <table class="w-full text-[10px] border-collapse border border-slate-300 mb-5">
+                <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-200 pb-1 mb-2 uppercase tracking-wide">1. Genel Proje ve Ruhsat Künyesi</h2>
+                <table class="w-full text-[9px] border-collapse border border-slate-300 mb-4">
                     <tbody>
                         <tr>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold w-1/4">Sorumlu Mühendis</td>
-                            <td class="border border-slate-300 p-2 w-1/4 text-slate-700" id="pdf_responsible_eng">-</td>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold w-1/4">İşveren / Müşteri</td>
-                            <td class="border border-slate-300 p-2 w-1/4 text-slate-700" id="pdf_client_val">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold w-1/4">Sorumlu Mühendis</td>
+                            <td class="border border-slate-300 p-1.5 w-1/4 text-slate-700" id="pdf_responsible_eng">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold w-1/4">İşveren / Müşteri</td>
+                            <td class="border border-slate-300 p-1.5 w-1/4 text-slate-700" id="pdf_client_val">-</td>
                         </tr>
                         <tr>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold">Kuyu Konumu / Adres</td>
-                            <td class="border border-slate-300 p-2 text-slate-700" id="pdf_location_val">-</td>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold">Mevkii / Ada / Parsel</td>
-                            <td class="border border-slate-300 p-2 text-slate-700" id="pdf_mevkii_val">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold">Kuyu Konumu / Adres</td>
+                            <td class="border border-slate-300 p-1.5 text-slate-700" id="pdf_location_val">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold">Mevkii / Ada / Parsel</td>
+                            <td class="border border-slate-300 p-1.5 text-slate-700" id="pdf_mevkii_val">-</td>
                         </tr>
                         <tr>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold">WGS84 Koordinatları</td>
-                            <td class="border border-slate-300 p-2 font-mono text-slate-700" id="pdf_coords_val">-</td>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold">UTM Koordinat Alanı</td>
-                            <td class="border border-slate-300 p-2 font-mono text-slate-700" id="pdf_utm_val">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold">WGS84 Koordinatları</td>
+                            <td class="border border-slate-300 p-1.5 font-mono text-slate-700" id="pdf_coords_val">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold">UTM Koordinat Alanı</td>
+                            <td class="border border-slate-300 p-1.5 font-mono text-slate-700" id="pdf_utm_val">-</td>
                         </tr>
                         <tr>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold">Kuyu Derinliği</td>
-                            <td class="border border-slate-300 p-2 font-bold text-slate-900" id="pdf_depth_val">0 m</td>
-                            <td class="border border-slate-300 bg-slate-50 p-2 font-bold">Boru & Delik Özellikleri</td>
-                            <td class="border border-slate-300 p-2 text-slate-700" id="pdf_pipe_spec_val">-</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold">Kuyu Derinliği</td>
+                            <td class="border border-slate-300 p-1.5 font-bold text-slate-900" id="pdf_depth_val">0 m</td>
+                            <td class="border border-slate-300 bg-slate-50 p-1.5 font-bold">Boru & Delik Özellikleri</td>
+                            <td class="border border-slate-300 p-1.5 text-slate-700" id="pdf_pipe_spec_val">-</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <!-- Hydraulic Parameters & Static Map Snapshot -->
-                <div class="grid grid-cols-2 gap-4 mb-5">
+                <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <h2 class="text-xs font-bold text-blue-800 border-b border-slate-200 pb-1 mb-2.5 uppercase tracking-wide">2. Pompa Deneyi ve Hidrolik Veriler</h2>
-                        <table class="w-full text-[10px] border-collapse border border-slate-300">
+                        <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-200 pb-1 mb-2 uppercase tracking-wide">2. Pompa Deneyi ve Hidrolik Veriler</h2>
+                        <table class="w-full text-[9px] border-collapse border border-slate-300">
                             <tbody>
                                 <tr>
-                                    <td class="border border-slate-300 bg-slate-50 p-2 font-semibold">Test Debisi (Q)</td>
-                                    <td class="border border-slate-300 p-2 font-mono text-slate-700" id="pdf_hyd_debi">-</td>
+                                    <td class="border border-slate-300 bg-slate-50 p-1.5 font-semibold">Test Debisi (Q)</td>
+                                    <td class="border border-slate-300 p-1.5 font-mono text-slate-700" id="pdf_hyd_debi">-</td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-slate-300 bg-slate-50 p-2 font-semibold">Statik Su Seviyesi (S.S.S)</td>
-                                    <td class="border border-slate-300 p-2 font-mono text-slate-700" id="pdf_hyd_statik">-</td>
+                                    <td class="border border-slate-300 bg-slate-50 p-1.5 font-semibold">Statik Su Seviyesi (S.S.S)</td>
+                                    <td class="border border-slate-300 p-1.5 font-mono text-slate-700" id="pdf_hyd_statik">-</td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-slate-300 bg-slate-50 p-2 font-semibold">Dinamik Su Seviyesi (D.S.S)</td>
-                                    <td class="border border-slate-300 p-2 font-mono text-slate-700" id="pdf_hyd_dinamik">-</td>
+                                    <td class="border border-slate-300 bg-slate-50 p-1.5 font-semibold">Dinamik Su Seviyesi (D.S.S)</td>
+                                    <td class="border border-slate-300 p-1.5 font-mono text-slate-700" id="pdf_hyd_dinamik">-</td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-slate-300 bg-slate-50 p-2 font-semibold">Toplam İşletme Düşümü</td>
-                                    <td class="border border-slate-300 p-2 font-mono text-slate-700" id="pdf_hyd_dusum">-</td>
+                                    <td class="border border-slate-300 bg-slate-50 p-1.5 font-semibold">Toplam İşletme Düşümü</td>
+                                    <td class="border border-slate-300 p-1.5 font-mono text-slate-700" id="pdf_hyd_dusum">-</td>
                                 </tr>
                                 <tr class="bg-blue-50 font-bold">
-                                    <td class="border border-slate-300 p-2 text-slate-900">Spesifik Kuyu Verimi</td>
-                                    <td class="border border-slate-300 p-2 text-blue-800 font-mono" id="pdf_hyd_sp_verim">-</td>
+                                    <td class="border border-slate-300 p-1.5 text-slate-900">Spesifik Kuyu Verimi</td>
+                                    <td class="border border-slate-300 p-1.5 text-blue-800 font-mono" id="pdf_hyd_sp_verim">-</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Map Static Target Plotter Container -->
-                    <div class="border border-slate-300 rounded p-2.5 flex flex-col justify-between bg-slate-50">
-                        <span class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Kuyu Lokasyon Krokisi (Coğrafi Konum)</span>
-                        <div id="pdf_map_image_container" class="w-full h-36 bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-200">
+                    <!-- Map Static Container -->
+                    <div class="border border-slate-300 rounded p-2 flex flex-col bg-slate-50">
+                        <span class="text-[8px] font-bold text-slate-500 uppercase block mb-1">Kuyu Lokasyon Krokisi (Coğrafi Konum)</span>
+                        <div id="pdf_map_image_container" class="w-full h-[105px] bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-200">
+                            <!-- Canvas'tan alınan map resmi buraya enjekte edilecek -->
                             <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Kuyu Harita Krokisi">
                         </div>
                     </div>
                 </div>
 
                 <!-- Teknik Beyan ve Taahhütname -->
-                <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded">
-                    <h3 class="text-[10px] font-bold text-slate-800 mb-1 uppercase tracking-wide">Teknik Beyan ve Taahhütname</h3>
-                    <p class="text-[9px] text-slate-500 italic leading-relaxed">
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                    <h3 class="text-[9px] font-bold text-slate-800 mb-1 uppercase tracking-wide">Teknik Beyan ve Taahhütname</h3>
+                    <p class="text-[8px] text-slate-500 italic leading-relaxed">
                         İş bu teknik kütükte yer alan sondaj lokasyonu, jeolojik formasyon verileri, kuyu teçhiz tasarımı ve akifer hidrolik parametreleri saha verilerine, teknik normlara ve mühendislik prensiplerine uygun olarak tarafımızca test edilip doğrulanarak kayıt altına alınmıştır.
                     </p>
-                    <div class="grid grid-cols-2 gap-4 text-center mt-5">
+                    <div class="grid grid-cols-2 gap-4 text-center mt-3">
                         <div>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase block">Sorumlu Jeoloji Mühendisi</span>
-                            <span class="text-[10px] font-bold text-slate-800 block mt-2" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
-                            <span class="text-[8px] text-slate-500 block">(İmza)</span>
+                            <span class="text-[7px] font-bold text-slate-400 uppercase block">Sorumlu Jeoloji Mühendisi</span>
+                            <span class="text-[9px] font-bold text-slate-800 block mt-1.5" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
+                            <span class="text-[7px] text-slate-500 block">(İmza)</span>
                         </div>
                         <div>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase block">Yüklenici Firma Yetkilisi</span>
-                            <div class="h-4"></div>
-                            <span class="text-[8px] text-slate-500 block">(Kaşe - İmza)</span>
+                            <span class="text-[7px] font-bold text-slate-400 uppercase block">Yüklenici Firma Yetkilisi</span>
+                            <div class="h-3"></div>
+                            <span class="text-[7px] text-slate-500 block">(Kaşe - İmza)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sayfa 2 -->
+            <!-- Sayfa 2: Kuyu Logu Grafik Alanı ve Tablo Detayları -->
             <div class="pdf-page">
-                <div class="border-b-2 border-slate-400 pb-2 mb-4 flex justify-between items-center">
+                <div class="border-b-2 border-slate-400 pb-2 mb-3 flex justify-between items-center">
                     <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Sondaj Jeoloji Logu & Teçhiz Tasarım Şeması</span>
                     <span class="text-[9px] text-slate-500 font-mono" id="pdf_page_date">Tarih: 12.06.2026</span>
                 </div>
 
-                <div class="grid grid-cols-12 gap-5">
+                <div class="grid grid-cols-12 gap-4">
                     <!-- Kuyu Logu Grafik Alanı (Canvas'tan gelen net resim buraya oturur) -->
-                    <div class="col-span-5 border border-slate-300 rounded p-2.5 bg-slate-900 flex flex-col items-center justify-center">
-                        <span class="text-[9px] font-bold text-blue-400 mb-1.5 uppercase tracking-wider">Grafik Kuyu Profili ve Kesiti</span>
-                        <img id="pdf_canvas_img" src="" class="border border-slate-950 rounded w-full max-h-[580px] object-contain" alt="Kuyu Şeması">
+                    <div class="col-span-5 border border-slate-300 rounded p-2 bg-slate-900 flex flex-col items-center justify-center">
+                        <span class="text-[8px] font-bold text-blue-400 mb-1.5 uppercase tracking-wider">Grafik Kuyu Profili ve Kesiti</span>
+                        <img id="pdf_canvas_img" src="" class="border border-slate-950 rounded w-full max-h-[560px] object-contain" alt="Kuyu Şeması">
                     </div>
 
                     <!-- Detay Tabloları -->
                     <div class="col-span-7 flex flex-col justify-between">
                         <div>
-                            <h3 class="text-[10px] font-bold text-amber-800 border-b border-slate-200 pb-1 mb-2 uppercase tracking-wide">3. Jeolojik Tabaka Detayları</h3>
-                            <table class="w-full text-[9px] border-collapse border border-slate-300" id="pdf_lito_table">
-                                <thead>
-                                    <tr class="bg-slate-100 font-bold text-slate-700">
-                                        <th class="border border-slate-300 p-1 text-center w-24">Aralık (m)</th>
-                                        <th class="border border-slate-300 p-1">Litoloji / Açıklama</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dinamik veri -->
-                                </tbody>
-                            </table>
+                            <h3 class="text-[9px] font-bold text-amber-800 border-b border-slate-200 pb-1 mb-1.5 uppercase tracking-wide">3. Jeolojik Tabaka Detayları</h3>
+                            <div class="overflow-hidden">
+                                <table class="w-full text-[8px] border-collapse border border-slate-300" id="pdf_lito_table">
+                                    <thead>
+                                        <tr class="bg-slate-100 font-bold text-slate-700">
+                                            <th class="border border-slate-300 p-1 text-center w-20">Aralık (m)</th>
+                                            <th class="border border-slate-300 p-1">Litoloji / Açıklama</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dinamik veri -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
-                        <div class="mt-4">
-                            <h3 class="text-[10px] font-bold text-emerald-800 border-b border-slate-200 pb-1 mb-2 uppercase tracking-wide">4. Kuyu Borulama & Teçhiz Listesi</h3>
-                            <table class="w-full text-[9px] border-collapse border border-slate-300" id="pdf_tech_table">
-                                <thead>
-                                    <tr class="bg-slate-100 font-bold text-slate-700">
-                                        <th class="border border-slate-300 p-1 text-center w-24">Boru Kotu (m)</th>
-                                        <th class="border border-slate-300 p-1">Tip</th>
-                                        <th class="border border-slate-300 p-1">Teknik Özellik / Çap</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dinamik veri -->
-                                </tbody>
-                            </table>
+                        <div class="mt-3">
+                            <h3 class="text-[9px] font-bold text-emerald-800 border-b border-slate-200 pb-1 mb-1.5 uppercase tracking-wide">4. Kuyu Borulama & Teçhiz Listesi</h3>
+                            <div class="overflow-hidden">
+                                <table class="w-full text-[8px] border-collapse border border-slate-300" id="pdf_tech_table">
+                                    <thead>
+                                        <tr class="bg-slate-100 font-bold text-slate-700">
+                                            <th class="border border-slate-300 p-1 text-center w-20">Boru Kotu (m)</th>
+                                            <th class="border border-slate-300 p-1">Tip</th>
+                                            <th class="border border-slate-300 p-1">Teknik Özellik / Çap</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dinamik veri -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <!-- Alt Bilgi -->
-                        <div class="mt-6 pt-4 border-t border-slate-200 text-center">
+                        <div class="mt-4 pt-3 border-t border-slate-200 text-center">
                             <p class="text-[8px] text-slate-400">
                                 GeoLog Pro® Yazılımı ile otomatik oluşturulmuştur. Tüm Hakları Saklıdır.
                             </p>
@@ -609,15 +616,15 @@
         let kuyuMarker;
         let isSatellite = true;
 
-        // Leaflet Harita Katmanları (Esri & OSM)
+        // Leaflet Harita Katmanları (Esri & OSM) - CORS desteği aktif
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
-            crossOrigin: true
+            crossOrigin: 'anonymous'
         });
 
         const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap',
-            crossOrigin: true
+            crossOrigin: 'anonymous'
         });
 
         const litColors = {
@@ -991,7 +998,7 @@
             showToast("Hazır firma şablon verileri yüklendi.", "success");
         }
 
-        // TÜM LİTOLOJİLER İÇİN VEKTÖREL TARAMALAR
+        // TÜM 18 JEOLOJİK LİTOLOJİ İÇİN VEKTÖREL TARAMALAR
         function createHatchPattern(ctx, type, color) {
             ctx.fillStyle = color;
             
@@ -1147,7 +1154,7 @@
             return ctx.createPattern(tempCanvas, 'repeat');
         }
 
-        // CANVAS PLOTTER (Kuyu Log Çizim Ekranı)
+        // CANVAS PLOTTER
         function drawCanvasLog() {
             const canvas = document.getElementById('logCanvas');
             const ctx = canvas.getContext('2d');
@@ -1159,9 +1166,11 @@
             const drawHeight = canvas.height - (padding * 2);
             const scale = drawHeight / totalDepth;
 
+            // Arka planı koyulaştır
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Kolon koordinatları
             const litoLeft = 45;
             const litoWidth = 100;
             const techLeft = 175;
@@ -1204,6 +1213,7 @@
             ctx.fillStyle = '#1e293b';
             ctx.fillRect(techLeft, padding, techWidth, drawHeight);
 
+            // Sondaj Çapı Sınırları
             ctx.strokeStyle = '#475569';
             ctx.lineWidth = 1;
             ctx.setLineDash([3, 3]);
@@ -1257,6 +1267,7 @@
                     ctx.fillStyle = '#1d3557';
                     ctx.fillRect(pipeLeft + 5, y, pipeWidth - 10, h);
 
+                    // Filtre delikleri
                     ctx.strokeStyle = '#ffffff';
                     ctx.lineWidth = 1;
                     for (let py = y + 4; py < y + h; py += 8) {
@@ -1299,7 +1310,7 @@
             ctx.fillText("TEÇHİZ", techLeft + (techWidth/2), padding - 10);
         }
 
-        // LEAFLET CAN-CONVERT (Harita Karolarını Birleştirip Base64 Resme Çevirme)
+        // LEAFLET CAN-CONVERT (Haritayı Base64 Görüntüsüne Dönüştürerek Güvenli Çıktı Alma)
         function captureMapCanvas(callback) {
             const mapContainer = document.getElementById('map');
             const tiles = mapContainer.querySelectorAll('.leaflet-tile-container img');
@@ -1323,7 +1334,7 @@
 
             tiles.forEach(tile => {
                 const img = new Image();
-                img.crossOrigin = 'anonymous';
+                img.crossOrigin = 'anonymous'; // CORS güvenlik hatasını önlemek için zorunlu
                 img.onload = function() {
                     const rect = tile.getBoundingClientRect();
                     const containerRect = mapContainer.getBoundingClientRect();
@@ -1353,6 +1364,7 @@
                 const mx = (markerRect.left - containerRect.left) + (markerRect.width / 2);
                 const my = (markerRect.top - containerRect.top) + (markerRect.height);
 
+                // Kırmızı Hedef Pini Çizimi
                 ctx.fillStyle = '#ef4444';
                 ctx.beginPath();
                 ctx.arc(mx, my - 20, 8, 0, Math.PI, true);
@@ -1374,19 +1386,19 @@
             callback(canvas.toDataURL('image/png'));
         }
 
-        // ASENKRON RESİM YÜKLEME SÖZÜ (Görsellerin Belleğe Tam İndirilmesini Sağlar)
+        // Asenkron Resim Yükleme Kilidini Bekleme Sözü
         function imgLoadPromise(imgElement) {
             return new Promise((resolve) => {
                 if (imgElement.complete && imgElement.naturalWidth !== 0) {
                     resolve();
                 } else {
                     imgElement.onload = () => resolve();
-                    imgElement.onerror = () => resolve(); // Hata olsa bile kilitlemeyi önle
+                    imgElement.onerror = () => resolve();
                 }
             });
         }
 
-        // AKILLI VE KAYIPSIZ PDF EXPORT SİSTEMİ
+        // AKILLI, CORS-DESTEKLİ VE KAYIPSIZ PDF EXPORT SİSTEMİ
         function exportToPDF() {
             if (lithologies.length === 0) {
                 showToast("Lütfen PDF kaydetmeden önce kuyu verilerini doldurun!", "error");
@@ -1395,7 +1407,7 @@
 
             showToast("PDF Raporu hazırlanıyor, lütfen bekleyin...", "info");
 
-            // 1. PDF Form alanlarını doldur
+            // 1. PDF Form alanlarını senkronize et
             document.getElementById('pdf_firm_name').innerText = document.getElementById('firm_name').value.toUpperCase();
             document.getElementById('pdf_kuyu_amaci').innerText = document.getElementById('p_amaci').value;
             document.getElementById('pdf_responsible_eng').innerText = document.getElementById('firm_engineer').value;
@@ -1455,17 +1467,16 @@
             const pdfCanvasImg = document.getElementById('pdf_canvas_img');
             pdfCanvasImg.src = mainCanvas.toDataURL('image/png');
 
-            // 5. Haritayı Base64 Görüntüsüne Çevir ve PDF'e Bas
+            // 5. Haritayı Görüntüye Çevir ve PDF'e Bas
             captureMapCanvas(function(mapBase64) {
                 const pdfMapImg = document.getElementById('pdf_map_static_img');
                 pdfMapImg.src = mapBase64;
 
-                // Her iki görselin de tarayıcı tarafından belleğe yazılmasını bekle
+                // Her iki görsel de tarayıcı tarafından tam yüklenene dek asenkron kuyruğu beklet
                 Promise.all([
                     imgLoadPromise(pdfCanvasImg),
                     imgLoadPromise(pdfMapImg)
                 ]).then(() => {
-                    // PDF oluşturucu kütüphaneyi (html2pdf) başlat
                     const element = document.getElementById('print-pdf-wrapper');
                     const kuyuSahibi = document.getElementById('p_client').value.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ ]/g, "").replace(/\s+/g, "_");
                     const filename = `Sondaj_Log_Raporu_${kuyuSahibi}.pdf`;
@@ -1474,7 +1485,7 @@
                         margin:       [0, 0, 0, 0],
                         filename:     filename,
                         image:        { type: 'jpeg', quality: 0.98 },
-                        html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
+                        html2canvas:  { scale: 2.2, useCORS: true, allowTaint: true, logging: false },
                         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                     };
 
