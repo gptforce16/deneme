@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profesyonel Kuyu Sondaj Logu ve Teçhiz Editörü2</title>
+    <title>Profesyonel Kuyu Sondaj Logu ve Teçhiz Editörü</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- html2pdf.js for Professional PDF generation -->
@@ -52,7 +52,7 @@
         #map {
             z-index: 10;
         }
-        /* Tek Sayfa A4 PDF Tasarımı (Milimetrik Sınırlandırma) */
+        /* Tek Sayfa A4 PDF Tasarımı (Milimetrik Sınırlandırma ve Sıfır Taşma) */
         .pdf-page-single {
             box-sizing: border-box;
             width: 210mm;
@@ -425,12 +425,12 @@
         </div>
     </main>
 
-    <!-- HIDDEN ACTIVE PRINT AREA FOR SINGLE PAGE A4 EXPORT (EKRAN DIŞINDA DEPOLANIR) -->
+    <!-- HIDDEN ACTIVE PRINT AREA FOR SINGLE PAGE A4 EXPORT -->
     <div style="position: absolute; left: -9999px; top: -9999px; width: 210mm; z-index: -100;">
         <div id="print-pdf-wrapper" class="pdf-page-single flex flex-col justify-between">
             
             <!-- Page Header -->
-            <div class="border-b-2 border-slate-800 pb-1.5 mb-2.5 flex justify-between items-start">
+            <div class="border-b-2 border-slate-800 pb-1.5 mb-2 flex justify-between items-start">
                 <div>
                     <h1 id="pdf_firm_name" class="text-sm font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
                     <p class="text-[8px] text-slate-500 font-semibold tracking-wider">RESMİ SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOG RAPORU</p>
@@ -443,8 +443,8 @@
             <!-- Single Page Layout Grid -->
             <div class="grid grid-cols-12 gap-3 flex-1 overflow-hidden" style="max-height: 255mm;">
                 
-                <!-- SOL SÜTUN (Bilgi Kartları ve Tablolar) -->
-                <div class="col-span-7 flex flex-col justify-between h-full space-y-2">
+                <!-- SOL SÜTUN -->
+                <div class="col-span-7 flex flex-col justify-between h-full space-y-1.5">
                     
                     <!-- 1. Proje Künyesi -->
                     <div>
@@ -479,7 +479,7 @@
                         </table>
                     </div>
 
-                    <!-- 2. Pompa Deneyi ve Harita Krokisi (Yan Yana Kompakt) -->
+                    <!-- 2. Pompa Deneyi ve Harita Krokisi -->
                     <div class="grid grid-cols-2 gap-2">
                         <!-- Pompa Deneyi -->
                         <div>
@@ -602,7 +602,7 @@
         let kuyuMarker;
         let isSatellite = true;
 
-        // Leaflet Harita Katmanları (Esri & OSM)
+        // Leaflet Harita Katmanları (Esri & OSM) - CORS desteği aktif
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
             crossOrigin: 'anonymous'
@@ -1152,9 +1152,11 @@
             const drawHeight = canvas.height - (padding * 2);
             const scale = drawHeight / totalDepth;
 
+            // Arka planı koyulaştır
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Kolon koordinatları
             const litoLeft = 45;
             const litoWidth = 100;
             const techLeft = 175;
@@ -1197,6 +1199,7 @@
             ctx.fillStyle = '#1e293b';
             ctx.fillRect(techLeft, padding, techWidth, drawHeight);
 
+            // Sondaj Çapı Sınırları
             ctx.strokeStyle = '#475569';
             ctx.lineWidth = 1;
             ctx.setLineDash([3, 3]);
@@ -1293,7 +1296,7 @@
             ctx.fillText("TEÇHİZ", techLeft + (techWidth/2), padding - 10);
         }
 
-        // LEAFLET CAN-CONVERT (Haritayı Base64 Görüntüsüne Çevirme)
+        // LEAFLET CAN-CONVERT (Haritayı Base64 Görüntüsüne Dönüştürerek Güvenli Çıktı Alma)
         function captureMapCanvas(callback) {
             const mapContainer = document.getElementById('map');
             const tiles = mapContainer.querySelectorAll('.leaflet-tile-container img');
@@ -1347,6 +1350,7 @@
                 const mx = (markerRect.left - containerRect.left) + (markerRect.width / 2);
                 const my = (markerRect.top - containerRect.top) + (markerRect.height);
 
+                // Kırmızı Hedef Pini Çizimi
                 ctx.fillStyle = '#ef4444';
                 ctx.beginPath();
                 ctx.arc(mx, my - 20, 8, 0, Math.PI, true);
@@ -1368,6 +1372,7 @@
             callback(canvas.toDataURL('image/png'));
         }
 
+        // Asenkron Resim Yükleme Kilidini Bekleme Sözü
         function imgLoadPromise(imgElement) {
             return new Promise((resolve) => {
                 if (imgElement.complete && imgElement.naturalWidth !== 0) {
@@ -1379,7 +1384,7 @@
             });
         }
 
-        // AKILLI VE %100 TEK SAYFAYA SIĞAN PDF EXPORT SİSTEMİ
+        // AKILLI, CORS-DESTEKLİ VE KAYIPSIZ PDF EXPORT SİSTEMİ
         function exportToPDF() {
             if (lithologies.length === 0) {
                 showToast("Lütfen PDF kaydetmeden önce kuyu verilerini doldurun!", "error");
@@ -1388,7 +1393,7 @@
 
             showToast("Tek sayfalık PDF Raporu hazırlanıyor, lütfen bekleyin...", "info");
 
-            // 1. PDF Form alanlarını doldur
+            // 1. PDF Form alanlarını senkronize et
             document.getElementById('pdf_firm_name').innerText = document.getElementById('firm_name').value.toUpperCase();
             document.getElementById('pdf_kuyu_amaci').innerText = document.getElementById('p_amaci').value;
             document.getElementById('pdf_responsible_eng').innerText = document.getElementById('firm_engineer').value;
@@ -1453,7 +1458,7 @@
                 const pdfMapImg = document.getElementById('pdf_map_static_img');
                 pdfMapImg.src = mapBase64;
 
-                // Görsellerin yüklenmesini bekle
+                // Her iki görsel de tarayıcı tarafından tam yüklenene dek asenkron kuyruğu beklet
                 Promise.all([
                     imgLoadPromise(pdfCanvasImg),
                     imgLoadPromise(pdfMapImg)
