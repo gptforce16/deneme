@@ -148,7 +148,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">MÜŞTERI / İŞ VEREN</label>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">KUYU SAHİBİ</label>
                             <input type="text" id="p_client" value="Doğa Tarım ve Hayvancılık A.Ş." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
@@ -399,7 +399,8 @@
                     <!-- Çizim Tahtası (BEYAZ ARKA PLAN) -->
                     <div class="flex justify-center bg-slate-100 rounded-xl p-3 shadow-inner border border-slate-200">
                         <div class="relative w-full max-h-[580px] overflow-y-auto flex justify-center">
-                            <canvas id="logCanvas" width="300" height="650" class="bg-white rounded border border-slate-300"></canvas>
+                            <!-- Ekranda görünüm boyutu style ile, gerçek kalite width ve height özellikleri ile sağlanacak -->
+                            <canvas id="logCanvas" class="bg-white rounded border border-slate-300"></canvas>
                         </div>
                     </div>
                     
@@ -432,7 +433,7 @@
         <div class="border-b-2 border-slate-800 pb-1 mb-1.5 flex justify-between items-start">
             <div>
                 <h1 id="pdf_firm_name" class="text-[14px] font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
-                <p class="text-[9px] text-slate-500 font-semibold tracking-wider">RESMİ SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOG RAPORU</p>
+                <p class="text-[9px] text-slate-500 font-semibold tracking-wider">SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOG RAPORU</p>
             </div>
             <div class="text-right">
                 <span class="text-[9px] bg-blue-100 text-blue-800 px-2 py-1 rounded font-bold uppercase tracking-wider border border-blue-200" id="pdf_kuyu_amaci">SULAMA SUYU</span>
@@ -442,8 +443,8 @@
         <!-- Single Page Layout Grid (Strict Height Contraints) -->
         <div class="grid grid-cols-12 gap-3 flex-1 overflow-hidden" style="max-height: 265mm;">
             
-            <!-- SOL SÜTUN (Daraltıldı) -->
-            <div class="col-span-4 flex flex-col h-full space-y-3" style="max-height: 260mm;">
+            <!-- SOL SÜTUN (%50 Ortalandı) -->
+            <div class="col-span-6 flex flex-col h-full space-y-3" style="max-height: 260mm;">
                 
                 <!-- 1. Proje Künyesi -->
                 <div>
@@ -451,15 +452,15 @@
                     <table class="w-full text-[8.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold w-1/3">Mühendis</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold w-1/3">Sorumlu Mühendis</td>
                                 <td class="border border-slate-400 p-1 text-slate-800" id="pdf_responsible_eng">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Müşteri</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Kuyu Sahibi</td>
                                 <td class="border border-slate-400 p-1 text-slate-800" id="pdf_client_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Adres / Lokasyon</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Adres</td>
                                 <td class="border border-slate-400 p-1 text-slate-800" id="pdf_location_val">-</td>
                             </tr>
                             <tr>
@@ -467,19 +468,15 @@
                                 <td class="border border-slate-400 p-1 text-slate-800" id="pdf_mevkii_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">WGS84 Koord.</td>
-                                <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_coords_val">-</td>
-                            </tr>
-                            <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">UTM Alanı</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Koordinat (ED50_6)</td>
                                 <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_utm_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Derinlik</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Kuyu Derinliği</td>
                                 <td class="border border-slate-400 p-1 font-bold text-slate-900" id="pdf_depth_val">0 m</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Boru & Delik</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Teçhiz ve Delgi Çapı</td>
                                 <td class="border border-slate-400 p-1 text-slate-800" id="pdf_pipe_spec_val">-</td>
                             </tr>
                         </tbody>
@@ -492,7 +489,7 @@
                     <table class="w-full text-[8.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-semibold">Test Debisi (Q)</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1 font-semibold">Kuyu Verimi</td>
                                 <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_hyd_debi">-</td>
                             </tr>
                             <tr>
@@ -502,10 +499,6 @@
                             <tr>
                                 <td class="border border-slate-400 bg-slate-100 p-1 font-semibold">Dinamik Seviye (D.S.S)</td>
                                 <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_hyd_dinamik">-</td>
-                            </tr>
-                            <tr class="bg-blue-50 font-bold border-b-2 border-blue-200">
-                                <td class="border border-slate-400 p-1 text-blue-900">Toplam Düşüm</td>
-                                <td class="border border-slate-400 p-1 text-blue-800 font-mono" id="pdf_hyd_dusum">-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -537,21 +530,13 @@
                 </div>
             </div>
 
-            <!-- SAĞ SÜTUN (Kuyu Profili Grafik Kolonu - Genişletildi) -->
-            <div class="col-span-8 border border-slate-400 rounded p-1.5 flex flex-col items-center justify-between h-full" style="max-height: 260mm;">
+            <!-- SAĞ SÜTUN (%50 Ortalandı) -->
+            <div class="col-span-6 border border-slate-400 rounded p-1.5 flex flex-col items-center justify-between h-full" style="max-height: 260mm;">
                 <span class="text-[10px] font-bold text-blue-900 mb-1 uppercase tracking-wider">Grafik Kuyu Şeması Kesiti</span>
                 <img id="pdf_canvas_img" src="" class="border border-slate-300 rounded w-full h-full object-contain" style="max-height: 245mm;" alt="Kuyu Şeması">
-                <span class="text-[8.5px] text-slate-600 mt-1 font-mono font-semibold" id="pdf_page_date">Tarih: -</span>
             </div>
 
         </div>
-
-        <!-- Sayfa Alt Bilgisi -->
-        <div class="border-t border-slate-400 pt-1 flex justify-between items-center text-[8.5px] text-slate-500 font-semibold mt-2">
-            <span>GeoLog Pro® - Gelişmiş Hidrojeolojik Sondaj Raporu</span>
-            <span>Sayfa 1 / 1</span>
-        </div>
-
     </div>
 
     <!-- Bildirim Balonu -->
@@ -659,14 +644,6 @@
                 kuyuMarker.setLatLng(latlng);
                 map.panTo(latlng);
                 convertToUtm();
-            }
-        }
-
-        function panToKuyu() {
-            const lat = parseFloat(document.getElementById('p_lat').value);
-            const lon = parseFloat(document.getElementById('p_lon').value);
-            if (!isNaN(lat) && !isNaN(lon)) {
-                map.setView([lat, lon], 17);
             }
         }
 
@@ -1125,15 +1102,31 @@
             const canvas = document.getElementById('logCanvas');
             const ctx = canvas.getContext('2d');
             
+            // Görüntü Kalitesini Artırmak İçin Ölçekleme İşlemi (High DPI)
+            const cssWidth = 300;
+            const cssHeight = 650;
+            const scaleFactor = 3; // 3x Yüksek çözünürlük oranı
+
+            canvas.width = cssWidth * scaleFactor;
+            canvas.height = cssHeight * scaleFactor;
+            canvas.style.width = cssWidth + 'px';
+            canvas.style.height = cssHeight + 'px';
+
+            ctx.scale(scaleFactor, scaleFactor);
+
+            // Geri kalan çizim koordinatları cssWidth ve cssHeight üzerinden devam eder
+            const canvasWidth = cssWidth;
+            const canvasHeight = cssHeight;
+            
             const totalDepth = parseFloat(document.getElementById('p_derinlik').value) || 100;
             document.getElementById('canvasDepthIndicator').innerText = totalDepth + " m";
 
             const padding = 40; 
-            const drawHeight = canvas.height - (padding + 25);
+            const drawHeight = canvasHeight - (padding + 25);
             const scale = drawHeight / totalDepth;
 
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
             const litoLeft = 45;
             const litoWidth = 100;
@@ -1308,7 +1301,7 @@
                 ctx.lineWidth = 0.5;
                 ctx.beginPath();
                 ctx.moveTo(10, y);
-                ctx.lineTo(canvas.width - 10, y);
+                ctx.lineTo(canvasWidth - 10, y);
                 ctx.stroke();
 
                 ctx.fillStyle = '#334155';
@@ -1318,8 +1311,8 @@
             ctx.fillStyle = '#2563eb';
             ctx.font = 'bold 8px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("JEOLOJİ", litoLeft + (litoWidth/2), padding - 22);
-            ctx.fillText("TEÇHİZ", techLeft + (techWidth/2), padding - 22);
+            ctx.fillText("JEOLOJİK KESİT", litoLeft + (litoWidth/2), padding - 22);
+            ctx.fillText("TEÇHİZ PLANI", techLeft + (techWidth/2), padding - 22);
 
             ctx.fillStyle = '#475569';
             ctx.font = 'bold 7.5px sans-serif';
@@ -1336,12 +1329,17 @@
             const markerImg = mapContainer.querySelector('.leaflet-marker-icon');
             
             const canvas = document.createElement('canvas');
-            canvas.width = mapContainer.offsetWidth;
-            canvas.height = mapContainer.offsetHeight;
+            
+            // Harita çıktısının da yüksek kaliteli olması için ölçekliyoruz
+            const scaleFactor = 3;
+            canvas.width = mapContainer.offsetWidth * scaleFactor;
+            canvas.height = mapContainer.offsetHeight * scaleFactor;
             const ctx = canvas.getContext('2d');
+            
+            ctx.scale(scaleFactor, scaleFactor);
 
             ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, mapContainer.offsetWidth, mapContainer.offsetHeight);
 
             let loadedCount = 0;
             const totalTiles = tiles.length;
@@ -1421,9 +1419,6 @@
             document.getElementById('pdf_location_val').innerText = document.getElementById('p_location').value;
             document.getElementById('pdf_mevkii_val').innerText = document.getElementById('p_mevkii').value;
             
-            const lat = document.getElementById('p_lat').value;
-            const lon = document.getElementById('p_lon').value;
-            document.getElementById('pdf_coords_val').innerText = `${lat} °N / ${lon} °E`;
             document.getElementById('pdf_utm_val').innerText = document.getElementById('p_koordinat').value;
             document.getElementById('pdf_depth_val').innerText = document.getElementById('p_derinlik').value + " Metre";
             document.getElementById('pdf_pipe_spec_val').innerText = document.getElementById('tech_pipe_spec').value + " (" + document.getElementById('tech_hole_spec').value + ")";
@@ -1432,17 +1427,12 @@
             const debiVal = parseFloat(document.getElementById('v_debi').value) || 0;
             const statikVal = parseFloat(document.getElementById('v_statik').value) || 0;
             const dinamikVal = parseFloat(document.getElementById('v_dinamik').value) || 0;
-            const dusumVal = (dinamikVal - statikVal).toFixed(1);
 
             document.getElementById('pdf_hyd_debi').innerText = debiVal + " lt/sn";
             document.getElementById('pdf_hyd_statik').innerText = statikVal + " m";
             document.getElementById('pdf_hyd_dinamik').innerText = dinamikVal + " m";
-            document.getElementById('pdf_hyd_dusum').innerText = dusumVal + " m";
             
             document.getElementById('pdf_sig_eng_p1').innerText = document.getElementById('firm_engineer').value;
-
-            const today = new Date();
-            document.getElementById('pdf_page_date').innerText = "Tarih: " + today.toLocaleDateString('tr-TR');
 
             // 4. Çizim Tahtasını Sabit Görsele Çevir
             const mainCanvas = document.getElementById('logCanvas');
