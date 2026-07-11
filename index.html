@@ -161,17 +161,21 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">KUYU DERİNLİĞİ (m)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">DERİNLİK (m)</label>
                             <input type="number" id="p_derinlik" value="100" oninput="drawCanvasLog()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <div>
+                        <div class="md:col-span-3">
                             <label class="block text-xs font-bold text-slate-500 mb-1">KUYU AMACI</label>
                             <input type="text" id="p_amaci" value="Endüstriyel & Sulama Suyu" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">UTM KOORDİNATI (ZONE / E / N)</label>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">RAPOR TARİHİ</label>
+                            <input type="date" id="p_tarih" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">KOORDİNAT (ZONE / E / N)</label>
                             <input type="text" id="p_koordinat" value="35 N 641250 D – 4485120 K" oninput="updateMapFromUtm()" class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Örn: 35 N 641250 D – 4485120 K">
                         </div>
                     </div>
@@ -430,14 +434,9 @@
     <div id="print-area" class="flex-col justify-between">
         
         <!-- Page Header -->
-        <div class="border-b-2 border-slate-800 pb-1 mb-1.5 flex justify-between items-start">
-            <div>
-                <h1 id="pdf_firm_name" class="text-[14px] font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
-                <p class="text-[9px] text-slate-500 font-semibold tracking-wider">SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOG RAPORU</p>
-            </div>
-            <div class="text-right">
-                <span class="text-[9px] bg-blue-100 text-blue-800 px-2 py-1 rounded font-bold uppercase tracking-wider border border-blue-200" id="pdf_kuyu_amaci">SULAMA SUYU</span>
-            </div>
+        <div class="border-b-2 border-slate-800 pb-1 mb-1.5">
+            <h1 id="pdf_firm_name" class="text-[14px] font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
+            <p class="text-[9px] text-slate-500 font-semibold tracking-wider">SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOG RAPORU</p>
         </div>
 
         <!-- Single Page Layout Grid (Strict Height Contraints) -->
@@ -448,36 +447,44 @@
                 
                 <!-- 1. Proje Künyesi -->
                 <div>
-                    <h2 class="text-[10px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1 uppercase tracking-wide">1. Genel Proje ve Ruhsat Künyesi</h2>
-                    <table class="w-full text-[8.5px] border-collapse border border-slate-400">
+                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">1. Genel Proje ve Ruhsat Künyesi</h2>
+                    <table class="w-full text-[9.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold w-1/3">Sorumlu Mühendis</td>
-                                <td class="border border-slate-400 p-1 text-slate-800" id="pdf_responsible_eng">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold w-[35%]">Sorumlu Mühendis</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_responsible_eng">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Kuyu Sahibi</td>
-                                <td class="border border-slate-400 p-1 text-slate-800" id="pdf_client_val">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Kuyu Sahibi</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_client_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Adres</td>
-                                <td class="border border-slate-400 p-1 text-slate-800" id="pdf_location_val">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Kullanım Amacı</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_kuyu_amaci">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Ada / Parsel</td>
-                                <td class="border border-slate-400 p-1 text-slate-800" id="pdf_mevkii_val">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Adres</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_location_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Koordinat (ED50_6)</td>
-                                <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_utm_val">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Ada / Parsel</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_mevkii_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Kuyu Derinliği</td>
-                                <td class="border border-slate-400 p-1 font-bold text-slate-900" id="pdf_depth_val">0 m</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Koordinat (ED50_6)</td>
+                                <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_utm_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-bold">Teçhiz ve Delgi Çapı</td>
-                                <td class="border border-slate-400 p-1 text-slate-800" id="pdf_pipe_spec_val">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Kuyu Derinliği</td>
+                                <td class="border border-slate-400 p-1.5 font-bold text-slate-900" id="pdf_depth_val">0 m</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Teçhiz ve Delgi Çapı</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_pipe_spec_val">-</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Rapor Tarihi</td>
+                                <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_tarih_val">-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -485,47 +492,41 @@
 
                 <!-- 2. Pompa Deneyi -->
                 <div>
-                    <h2 class="text-[10px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1 uppercase tracking-wide">2. Pompa Deney Verileri</h2>
-                    <table class="w-full text-[8.5px] border-collapse border border-slate-400">
+                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">2. Pompa Deney Verileri</h2>
+                    <table class="w-full text-[9.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-semibold">Kuyu Verimi</td>
-                                <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_hyd_debi">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-semibold w-[35%]">Kuyu Verimi</td>
+                                <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_hyd_debi">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-semibold">Statik Seviye (S.S.S)</td>
-                                <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_hyd_statik">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-semibold">Statik Seviye (S.S.S)</td>
+                                <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_hyd_statik">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1 font-semibold">Dinamik Seviye (D.S.S)</td>
-                                <td class="border border-slate-400 p-1 font-mono text-slate-800" id="pdf_hyd_dinamik">-</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-semibold">Dinamik Seviye (D.S.S)</td>
+                                <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_hyd_dinamik">-</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Harita Resmi -->
-                <div class="border border-slate-400 rounded p-1 flex flex-col flex-1 min-h-[150px]">
+                <div class="border border-slate-400 rounded p-1 flex flex-col mt-2">
                     <span class="text-[9px] font-bold text-slate-600 uppercase block mb-1">Kuyu Lokasyon Krokisi</span>
-                    <div id="pdf_map_image_container" class="w-full h-full bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300 flex-1">
+                    <div id="pdf_map_image_container" class="w-full h-[120px] bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300">
                         <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Konum Krokisi">
                     </div>
                 </div>
 
                 <!-- Teknik Beyan ve İmzalar -->
                 <div class="p-2 border border-slate-400 rounded mt-auto">
-                    <p class="text-[8px] text-slate-600 italic leading-snug">
+                    <p class="text-[8.5px] text-slate-600 italic leading-relaxed text-justify mb-2">
                         İş bu kütükte sunulan jeolojik formasyon kesitleri, kuyu teçhiz dizilimi ve akifer verim parametreleri tarafımızca doğrulanarak kayıt altına alınmıştır.
                     </p>
-                    <div class="grid grid-cols-2 gap-4 text-center mt-3">
-                        <div>
-                            <span class="text-[8px] font-bold text-slate-500 uppercase block">Sorumlu Jeoloji Mühendisi</span>
-                            <span class="text-[10px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
-                        </div>
-                        <div>
-                            <span class="text-[8px] font-bold text-slate-500 uppercase block">Yüklenici Yetkilisi</span>
-                            <span class="text-[10px] font-bold text-slate-500 block mt-1">(İmza - Kaşe)</span>
-                        </div>
+                    <div class="text-center mt-4 mb-2">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase block">Sorumlu Jeoloji Mühendisi</span>
+                        <span class="text-[11px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
                     </div>
                 </div>
             </div>
@@ -1330,8 +1331,8 @@
             
             const canvas = document.createElement('canvas');
             
-            // Harita çıktısının da yüksek kaliteli olması için ölçekliyoruz
-            const scaleFactor = 3;
+            // Harita çıktısının çok daha yüksek kaliteli olması için ölçekliyoruz (4x)
+            const scaleFactor = 4;
             canvas.width = mapContainer.offsetWidth * scaleFactor;
             canvas.height = mapContainer.offsetHeight * scaleFactor;
             const ctx = canvas.getContext('2d');
@@ -1423,6 +1424,14 @@
             document.getElementById('pdf_depth_val').innerText = document.getElementById('p_derinlik').value + " Metre";
             document.getElementById('pdf_pipe_spec_val').innerText = document.getElementById('tech_pipe_spec').value + " (" + document.getElementById('tech_hole_spec').value + ")";
 
+            const rawDate = document.getElementById('p_tarih').value;
+            if (rawDate) {
+                const [y, m, d] = rawDate.split('-');
+                document.getElementById('pdf_tarih_val').innerText = `${d}.${m}.${y}`;
+            } else {
+                document.getElementById('pdf_tarih_val').innerText = "-";
+            }
+
             // Hidrolik Veriler
             const debiVal = parseFloat(document.getElementById('v_debi').value) || 0;
             const statikVal = parseFloat(document.getElementById('v_statik').value) || 0;
@@ -1455,6 +1464,8 @@
             initMap();
             drawCanvasLog();
             convertToUtm();
+            // Otomatik olarak bugünün tarihini atar
+            document.getElementById('p_tarih').valueAsDate = new Date();
         }
     </script>
 </body>
