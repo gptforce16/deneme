@@ -501,15 +501,12 @@
 
                 <!-- Krokiler: Kuyu Başı & Lokasyon (Altlı Üstlü) -->
                 <div class="mb-2 flex flex-col gap-2 flex-1">
-                    <!-- Kuyu Başı Krokisi & Sadece Konum QR -->
+                    <!-- Kuyu Başı Krokisi -->
                     <div>
                         <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Başı Krokisi</h2>
-                        <div class="border border-slate-400 rounded p-1 flex flex-row h-[125px] bg-white items-center justify-between">
-                            
-                            <!-- Kuyu Başı Çizimi -->
-                            <div class="flex-1 flex justify-center items-center h-full border-r border-slate-200 pr-1">
-                                <svg viewBox="0 0 300 260" class="w-full h-full py-1">
-                                    <defs>
+                        <div class="border border-slate-400 rounded p-1 flex flex-col h-[125px] bg-white items-center justify-center">
+                            <svg viewBox="0 0 300 260" class="w-full h-full py-1">
+                                <defs>
                                         <pattern id="gravelPattern" width="15" height="15" patternUnits="userSpaceOnUse">
                                             <rect width="15" height="15" fill="#f8f9fa"/>
                                             <path d="M2,2 Q3,1 4,2 Q5,3 4,4 Q3,5 2,4 Z" fill="#666"/>
@@ -571,13 +568,6 @@
                                     <line x1="92" y1="165" x2="208" y2="165" stroke="#3b82f6" stroke-width="2" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>
                                     <text id="svg_hole_spec" x="150" y="160" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">15"</text>
                                 </svg>
-                            </div>
-
-                            <!-- Karekod (Sadece Konum) -->
-                            <div class="w-[70px] flex flex-col items-center justify-center pl-1 shrink-0">
-                                <canvas id="qr_map_canvas" class="w-[50px] h-[50px]"></canvas>
-                                <span class="text-[7px] text-slate-700 font-bold mt-1 text-center leading-tight">Konuma Git</span>
-                            </div>
                         </div>
                     </div>
 
@@ -593,13 +583,20 @@
                 </div>
 
                 <!-- Teknik Beyan ve İmzalar -->
-                <div class="p-2 border border-slate-400 rounded mt-auto">
-                    <p class="text-[9px] text-slate-600 italic leading-relaxed text-justify mb-2">
-                        İş bu kütükte sunulan jeolojik formasyon kesitleri, kuyu teçhiz dizilimi ve akifer verim parametreleri tarafımızca doğrulanarak kayıt altına alınmıştır.
-                    </p>
-                    <div class="text-center mt-4 mb-2">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Sorumlu Mühendis</span>
-                        <span class="text-[12px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
+                <div class="p-2 border border-slate-400 rounded mt-auto flex flex-row justify-between items-center gap-2">
+                    <div class="flex-1">
+                        <p class="text-[9px] text-slate-600 italic leading-relaxed text-justify mb-2">
+                            İş bu kütükte sunulan jeolojik formasyon kesitleri, kuyu teçhiz dizilimi ve akifer verim parametreleri tarafımızca doğrulanarak kayıt altına alınmıştır.
+                        </p>
+                        <div class="text-center mt-3">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase block">Sorumlu Mühendis</span>
+                            <span class="text-[12px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
+                        </div>
+                    </div>
+                    <!-- Karekod (Sadece Konum) -->
+                    <div class="w-[65px] flex flex-col items-center justify-center border-l border-slate-300 pl-2 shrink-0">
+                        <canvas id="qr_map_canvas" class="w-[50px] h-[50px]"></canvas>
+                        <span class="text-[7px] text-slate-700 font-bold mt-1 text-center leading-tight">Konuma Git</span>
                     </div>
                 </div>
             </div>
@@ -744,15 +741,46 @@
 
             if(isNaN(lat) || isNaN(lon)) return;
 
-            const zone = Math.floor((lon + 180) / 6) + 1;
-            const easting = Math.round(500000 + (lon - ((zone * 6) - 183)) * 85000);
-            const northing = Math.round(lat * 111120);
+            const utm = latLngToUtm(lat, lon);
 
-            document.getElementById('p_zone').value = zone;
-            document.getElementById('p_easting').value = easting;
-            document.getElementById('p_northing').value = northing;
+            document.getElementById('p_zone').value = utm.zone;
+            document.getElementById('p_easting').value = Math.round(utm.easting);
+            document.getElementById('p_northing').value = Math.round(utm.northing);
         }
 
+        // ED50_6 UTM Projeksiyon Formülü (Forward)
+        function latLngToUtm(lat, lon) {
+            const a = 6378388.0; // ED50 / International 1924 Ellipsoid
+            const f = 1.0 / 297.0;
+            const b = a * (1 - f);
+            const e2 = (a*a - b*b) / (a*a);
+            const ePrime2 = (a*a - b*b) / (b*b);
+
+            const zone = Math.floor((lon + 180) / 6) + 1;
+            const lon0 = (zone - 1) * 6 - 180 + 3;
+            const k0 = 0.9996;
+
+            const latRad = lat * Math.PI / 180;
+            const lonRad = lon * Math.PI / 180;
+            const lon0Rad = lon0 * Math.PI / 180;
+
+            const N = a / Math.sqrt(1 - e2 * Math.sin(latRad) * Math.sin(latRad));
+            const T = Math.tan(latRad) * Math.tan(latRad);
+            const C = ePrime2 * Math.cos(latRad) * Math.cos(latRad);
+            const A = Math.cos(latRad) * (lonRad - lon0Rad);
+
+            const M = a * ((1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256)*latRad 
+                         - (3*e2/8 + 3*e2*e2/32 + 45*e2*e2*e2/1024)*Math.sin(2*latRad) 
+                         + (15*e2*e2/256 + 45*e2*e2*e2/1024)*Math.sin(4*latRad) 
+                         - (35*e2*e2*e2/3072)*Math.sin(6*latRad));
+
+            const easting = k0 * N * (A + (1-T+C)*A*A*A/6 + (5 - 18*T + T*T + 72*C - 58*ePrime2)*A*A*A*A*A/120) + 500000.0;
+            const northing = k0 * (M + N*Math.tan(latRad)*(A*A/2 + (5 - T + 9*C + 4*C*C)*A*A*A*A/24 + (61 - 58*T + T*T + 600*C - 330*ePrime2)*A*A*A*A*A*A/720));
+
+            return { zone: zone, easting: easting, northing: northing };
+        }
+
+        // ED50_6 UTM Projeksiyon Formülü (Inverse)
         function updateMapFromUtm() {
             const zone = parseInt(document.getElementById('p_zone').value);
             const easting = parseFloat(document.getElementById('p_easting').value);
@@ -772,37 +800,38 @@
         }
 
         function utmToLatLng(zone, easting, northing) {
-            const a = 6378137.0; 
-            const f = 1.0 / 298.257223563; 
+            const a = 6378388.0; // ED50 / International 1924 Ellipsoid
+            const f = 1.0 / 297.0; 
             const b = a * (1.0 - f);
-            const e = Math.sqrt(1.0 - (b * b) / (a * a));
-            const ePrimeSquare = (e * e) / (1.0 - e * e);
+            const e2 = (a*a - b*b) / (a*a);
+            const ePrime2 = (a*a - b*b) / (b*b);
             
             const x = easting - 500000.0;
             const y = northing;
             
-            const meridian = (zone - 1) * 6 - 180 + 3; 
-            const meridianRad = (meridian * Math.PI) / 180;
+            const lon0 = (zone - 1) * 6 - 180 + 3; 
+            const lon0Rad = (lon0 * Math.PI) / 180;
             
             const k0 = 0.9996;
-            const arc = y / k0;
+            const M = y / k0;
             
-            const mu = arc / (a * (1 - e*e/4 - 3*e*e*e*e/64 - 5*e*e*e*e*e*e/256));
-            const e1 = (1 - Math.sqrt(1 - e*e)) / (1 + Math.sqrt(1 - e*e));
+            const e1 = (1 - Math.sqrt(1 - e2)) / (1 + Math.sqrt(1 - e2));
+            const mu = M / (a * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256));
+            
             const phi1Rad = mu + (3*e1/2 - 27*e1*e1*e1/32)*Math.sin(2*mu) 
                            + (21*e1*e1/16 - 55*e1*e1*e1*e1/32)*Math.sin(4*mu)
                            + (151*e1*e1*e1/96)*Math.sin(6*mu);
                            
-            const N1 = a / Math.sqrt(1 - e*e*Math.sin(phi1Rad)*Math.sin(phi1Rad));
+            const N1 = a / Math.sqrt(1 - e2*Math.sin(phi1Rad)*Math.sin(phi1Rad));
             const T1 = Math.tan(phi1Rad)*Math.tan(phi1Rad);
-            const C1 = ePrimeSquare*Math.cos(phi1Rad)*Math.cos(phi1Rad);
-            const R1 = a*(1-e*e)/Math.pow(1-e*e*Math.sin(phi1Rad)*Math.sin(phi1Rad), 1.5);
+            const C1 = ePrime2*Math.cos(phi1Rad)*Math.cos(phi1Rad);
+            const R1 = a*(1-e2)/Math.pow(1-e2*Math.sin(phi1Rad)*Math.sin(phi1Rad), 1.5);
             const D = x / (N1*k0);
             
-            let lat = phi1Rad - (N1*Math.tan(phi1Rad)/R1)*(D*D/2 - (5 + 3*T1 + 10*C1 - 4*C1*C1 - 9*ePrimeSquare)*Math.pow(D,4)/24 
-                      + (61 + 90*T1 + 298*C1 + 45*T1*T1 - 252*ePrimeSquare - 3*C1*C1)*Math.pow(D,6)/720);
-            let lon = meridianRad + (D - (1 + 2*T1 + C1)*Math.pow(D,3)/6 
-                      + (5 - 2*C1 + 28*T1 - 3*C1*C1 + 8*ePrimeSquare + 24*T1*T1)*Math.pow(D,5)/120) / Math.cos(phi1Rad);
+            let lat = phi1Rad - (N1*Math.tan(phi1Rad)/R1)*(D*D/2 - (5 + 3*T1 + 10*C1 - 4*C1*C1 - 9*ePrime2)*Math.pow(D,4)/24 
+                      + (61 + 90*T1 + 298*C1 + 45*T1*T1 - 252*ePrime2 - 3*C1*C1)*Math.pow(D,6)/720);
+            let lon = lon0Rad + (D - (1 + 2*T1 + C1)*Math.pow(D,3)/6 
+                      + (5 - 2*C1 + 28*T1 - 3*C1*C1 + 8*ePrime2 + 24*T1*T1)*Math.pow(D,5)/120) / Math.cos(phi1Rad);
                       
             return {
                 lat: (lat * 180) / Math.PI,
