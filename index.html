@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profesyonel Kuyu Sondaj Logu ve Teçhiz Editörü</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -32,7 +38,7 @@
     </script>
     <style>
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
         ::-webkit-scrollbar {
             width: 6px;
@@ -186,9 +192,19 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 mt-4">
-                        <label class="block text-xs font-bold text-slate-500 mb-1">KOORDİNAT (ZONE / E / N)</label>
-                        <input type="text" id="p_koordinat" value="35 N 641250 D – 4485120 K" oninput="updateMapFromUtm()" class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Örn: 35 N 641250 D – 4485120 K">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">UTM DİLİMİ (ZONE)</label>
+                            <input type="number" id="p_zone" value="35" oninput="updateMapFromUtm()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">SAĞA DEĞER (DOĞU / Y)</label>
+                            <input type="number" id="p_easting" value="641250" oninput="updateMapFromUtm()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">YUKARI DEĞER (KUZEY / X)</label>
+                            <input type="number" id="p_northing" value="4485120" oninput="updateMapFromUtm()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
                     </div>
                 </div>
 
@@ -428,7 +444,7 @@
                 
                 <!-- 1. Proje Künyesi -->
                 <div>
-                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">1. Genel Proje ve Ruhsat Künyesi</h2>
+                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Genel Proje ve Ruhsat Künyesi</h2>
                     <table class="w-full text-[9.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
@@ -461,7 +477,7 @@
                             </tr>
                             <tr>
                                 <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Kuyu Derinliği</td>
-                                <td class="border border-slate-400 p-1.5 font-bold text-slate-900" id="pdf_depth_val">0 m</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_depth_val">0 m</td>
                             </tr>
                             <tr>
                                 <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Teçhiz ve Delgi Çapı</td>
@@ -477,7 +493,7 @@
 
                 <!-- 2. Pompa Deneyi -->
                 <div>
-                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">2. Pompa Deney Verileri</h2>
+                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Pompa Deney Verileri</h2>
                     <table class="w-full text-[9.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
@@ -501,10 +517,12 @@
                 </div>
 
                 <!-- Harita Resmi -->
-                <div class="border border-slate-400 rounded p-1 flex flex-col mt-2">
-                    <span class="text-[9px] font-bold text-slate-600 uppercase block mb-1">Kuyu Lokasyon Krokisi</span>
-                    <div id="pdf_map_image_container" class="w-full h-[120px] bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300">
-                        <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Konum Krokisi">
+                <div class="mt-2">
+                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Lokasyon Krokisi</h2>
+                    <div class="border border-slate-400 rounded p-1 flex flex-col">
+                        <div id="pdf_map_image_container" class="w-full h-[180px] bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300">
+                            <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Konum Krokisi">
+                        </div>
                     </div>
                 </div>
 
@@ -712,22 +730,17 @@
             const easting = Math.round(500000 + (lon - ((zone * 6) - 183)) * 85000);
             const northing = Math.round(lat * 111120);
 
-            const utmString = `${zone} N ${easting} D – ${northing} K`;
-            document.getElementById('p_koordinat').value = utmString;
+            document.getElementById('p_zone').value = zone;
+            document.getElementById('p_easting').value = easting;
+            document.getElementById('p_northing').value = northing;
         }
 
         function updateMapFromUtm() {
-            const utmStr = document.getElementById('p_koordinat').value;
-            if (!utmStr) return;
+            const zone = parseInt(document.getElementById('p_zone').value);
+            const easting = parseFloat(document.getElementById('p_easting').value);
+            const northing = parseFloat(document.getElementById('p_northing').value);
 
-            const regex = /(\d+)\s*([NnSs]?)\s*(\d+)\s*[Dd]?\s*[–-]?\s*(\d+)\s*[Kk]?/;
-            const match = utmStr.match(regex);
-
-            if (match) {
-                const zone = parseInt(match[1]);
-                const easting = parseFloat(match[3]);
-                const northing = parseFloat(match[4]);
-
+            if (!isNaN(zone) && !isNaN(easting) && !isNaN(northing)) {
                 const resultCoords = utmToLatLng(zone, easting, northing);
                 if (resultCoords && !isNaN(resultCoords.lat) && !isNaN(resultCoords.lon)) {
                     document.getElementById('p_lat').value = resultCoords.lat.toFixed(6);
@@ -941,7 +954,7 @@
 
             document.getElementById('p_lat').value = "40.262500";
             document.getElementById('p_lon').value = "29.663100";
-            updateMapFromInputs();
+            updateMapFromInputs(); // Bu aynı zamanda UTM alanlarını da otomatik doldurur
 
             document.getElementById('v_debi').value = "15";
             document.getElementById('v_statik').value = "18";
@@ -1410,7 +1423,11 @@
             document.getElementById('pdf_location_val').innerText = document.getElementById('p_il').value + " / " + document.getElementById('p_ilce').value + " / " + document.getElementById('p_mahalle').value;
             document.getElementById('pdf_mevkii_val').innerText = document.getElementById('p_ada').value + " Ada / " + document.getElementById('p_parsel').value + " Parsel";
             
-            document.getElementById('pdf_utm_val').innerText = document.getElementById('p_koordinat').value;
+            const zone = document.getElementById('p_zone').value;
+            const easting = document.getElementById('p_easting').value;
+            const northing = document.getElementById('p_northing').value;
+            document.getElementById('pdf_utm_val').innerText = `${zone} N ${easting} D – ${northing} K`;
+            
             document.getElementById('pdf_depth_val').innerText = document.getElementById('p_derinlik').value + " Metre";
             document.getElementById('pdf_pipe_spec_val').innerText = document.getElementById('tech_pipe_spec').value + " (" + document.getElementById('tech_hole_spec').value + ")";
 
