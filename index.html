@@ -18,27 +18,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f4f6fa',
-                            100: '#e9edf5',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
         ::-webkit-scrollbar {
             width: 6px;
@@ -444,8 +429,8 @@
                 
                 <!-- 1. Proje Künyesi -->
                 <div>
-                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Genel Proje ve Ruhsat Künyesi</h2>
-                    <table class="w-full text-[9.5px] border-collapse border border-slate-400">
+                    <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Genel Proje ve Ruhsat Künyesi</h2>
+                    <table class="w-full text-[10px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
                                 <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold w-[35%]">Firma Adı</td>
@@ -493,8 +478,8 @@
 
                 <!-- 2. Pompa Deneyi -->
                 <div>
-                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Pompa Deney Verileri</h2>
-                    <table class="w-full text-[9.5px] border-collapse border border-slate-400">
+                    <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Pompa Deney Verileri</h2>
+                    <table class="w-full text-[10px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
                                 <td class="border border-slate-400 bg-slate-100 p-1.5 font-semibold w-[35%]">Kuyu Verimi</td>
@@ -520,9 +505,9 @@
                 <div class="mt-2 flex flex-col gap-2">
                     <!-- Kuyu Başı Krokisi (Dinamik SVG Vektör) -->
                     <div>
-                        <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Başı Krokisi</h2>
-                        <div class="border border-slate-400 rounded p-1 flex flex-col h-[110px] bg-white items-center justify-center">
-                            <svg viewBox="0 0 300 230" class="w-full h-full">
+                        <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Başı Krokisi</h2>
+                        <div class="border border-slate-400 rounded p-1 flex flex-col h-[125px] bg-white items-center justify-center">
+                            <svg viewBox="0 0 300 240" class="w-full h-full">
                                 <defs>
                                     <pattern id="gravelPattern" width="15" height="15" patternUnits="userSpaceOnUse">
                                         <rect width="15" height="15" fill="#f8f9fa"/>
@@ -561,15 +546,15 @@
                                 <rect x="90" y="75" width="120" height="40" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
                                 
                                 <!-- Gravel Column -->
-                                <rect x="90" y="115" width="120" height="105" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                <rect x="90" y="115" width="120" height="115" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
 
                                 <!-- Casing Main Body -->
-                                <rect x="110" y="45" width="80" height="175" fill="url(#casingGrad)" stroke="#1e293b" stroke-width="1.5"/>
+                                <rect x="110" y="45" width="80" height="185" fill="url(#casingGrad)" stroke="#1e293b" stroke-width="1.5"/>
                                 <ellipse cx="150" cy="45" rx="40" ry="12" fill="#f8fafc" stroke="#1e293b" stroke-width="1.5"/>
-                                <ellipse cx="150" cy="220" rx="40" ry="12" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.5"/>
+                                <ellipse cx="150" cy="230" rx="40" ry="12" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.5"/>
 
                                 <!-- Gravel Pipe -->
-                                <rect x="194" y="15" width="12" height="100" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                <rect x="194" y="15" width="12" height="110" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
                                 <ellipse cx="200" cy="15" rx="6" ry="2.5" fill="#fff" stroke="#1e293b" stroke-width="1.5"/>
 
                                 <!-- Annotations -->
@@ -590,7 +575,7 @@
 
                     <!-- Harita Resmi -->
                     <div>
-                        <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Lokasyon Krokisi</h2>
+                        <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Lokasyon Krokisi</h2>
                         <div class="border border-slate-400 rounded p-1 flex flex-col h-[180px]">
                             <div id="pdf_map_image_container" class="w-full h-full bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300">
                                 <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Konum Krokisi">
@@ -601,19 +586,19 @@
 
                 <!-- Teknik Beyan ve İmzalar -->
                 <div class="p-2 border border-slate-400 rounded mt-auto">
-                    <p class="text-[8.5px] text-slate-600 italic leading-relaxed text-justify mb-2">
+                    <p class="text-[9px] text-slate-600 italic leading-relaxed text-justify mb-2">
                         İş bu kütükte sunulan jeolojik formasyon kesitleri, kuyu teçhiz dizilimi ve akifer verim parametreleri tarafımızca doğrulanarak kayıt altına alınmıştır.
                     </p>
                     <div class="text-center mt-4 mb-2">
-                        <span class="text-[9px] font-bold text-slate-500 uppercase block">Sorumlu Jeoloji Mühendisi</span>
-                        <span class="text-[11px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Sorumlu Jeoloji Mühendisi</span>
+                        <span class="text-[12px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
                     </div>
                 </div>
             </div>
 
             <!-- SAĞ SÜTUN (%50 Ortalandı) -->
             <div class="col-span-6 border border-slate-400 rounded p-1.5 flex flex-col items-center justify-between h-full" style="max-height: 260mm;">
-                <span class="text-[10px] font-bold text-blue-900 mb-1 uppercase tracking-wider">Grafik Kuyu Şeması Kesiti</span>
+                <span class="text-[11px] font-bold text-blue-900 mb-1 uppercase tracking-wider">Kuyu Şeması</span>
                 <img id="pdf_canvas_img" src="" class="border border-slate-300 rounded w-full h-full object-contain" style="max-height: 245mm;" alt="Kuyu Şeması">
             </div>
 
