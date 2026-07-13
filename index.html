@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <!-- QRious (QR Code Generator) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <!-- Proj4js (Precision Coordinate Transformation) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
     
     <style>
         body {
@@ -741,102 +743,35 @@
 
             if(isNaN(lat) || isNaN(lon)) return;
 
-            const utm = latLngToUtm(lat, lon);
-
-            document.getElementById('p_zone').value = utm.zone;
-            document.getElementById('p_easting').value = Math.round(utm.easting);
-            document.getElementById('p_northing').value = Math.round(utm.northing);
-        }
-
-        // ED50_6 UTM Projeksiyon Formülü (Forward)
-        function latLngToUtm(lat, lon) {
-            const a = 6378388.0; // ED50 / International 1924 Ellipsoid
-            const f = 1.0 / 297.0;
-            const b = a * (1 - f);
-            const e2 = (a*a - b*b) / (a*a);
-            const ePrime2 = (a*a - b*b) / (b*b);
-
             const zone = Math.floor((lon + 180) / 6) + 1;
-            const lon0 = (zone - 1) * 6 - 180 + 3;
-            const k0 = 0.9996;
+            // ED50_6 Turkey towgs84 offset parameters (-84, -95, -130)
+            const ed50Proj = `+proj=utm +zone=${zone} +ellps=intl +towgs84=-84,-95,-130,0,0,0,0 +units=m +no_defs`;
 
-            const latRad = lat * Math.PI / 180;
-            const lonRad = lon * Math.PI / 180;
-            const lon0Rad = lon0 * Math.PI / 180;
+            const utm = proj4(proj4.WGS84, ed50Proj, [lon, lat]);
 
-            const N = a / Math.sqrt(1 - e2 * Math.sin(latRad) * Math.sin(latRad));
-            const T = Math.tan(latRad) * Math.tan(latRad);
-            const C = ePrime2 * Math.cos(latRad) * Math.cos(latRad);
-            const A = Math.cos(latRad) * (lonRad - lon0Rad);
-
-            const M = a * ((1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256)*latRad 
-                         - (3*e2/8 + 3*e2*e2/32 + 45*e2*e2*e2/1024)*Math.sin(2*latRad) 
-                         + (15*e2*e2/256 + 45*e2*e2*e2/1024)*Math.sin(4*latRad) 
-                         - (35*e2*e2*e2/3072)*Math.sin(6*latRad));
-
-            const easting = k0 * N * (A + (1-T+C)*A*A*A/6 + (5 - 18*T + T*T + 72*C - 58*ePrime2)*A*A*A*A*A/120) + 500000.0;
-            const northing = k0 * (M + N*Math.tan(latRad)*(A*A/2 + (5 - T + 9*C + 4*C*C)*A*A*A*A/24 + (61 - 58*T + T*T + 600*C - 330*ePrime2)*A*A*A*A*A*A/720));
-
-            return { zone: zone, easting: easting, northing: northing };
+            document.getElementById('p_zone').value = zone;
+            document.getElementById('p_easting').value = Math.round(utm[0]);
+            document.getElementById('p_northing').value = Math.round(utm[1]);
         }
 
-        // ED50_6 UTM Projeksiyon Formülü (Inverse)
         function updateMapFromUtm() {
             const zone = parseInt(document.getElementById('p_zone').value);
             const easting = parseFloat(document.getElementById('p_easting').value);
             const northing = parseFloat(document.getElementById('p_northing').value);
 
             if (!isNaN(zone) && !isNaN(easting) && !isNaN(northing)) {
-                const resultCoords = utmToLatLng(zone, easting, northing);
-                if (resultCoords && !isNaN(resultCoords.lat) && !isNaN(resultCoords.lon)) {
-                    document.getElementById('p_lat').value = resultCoords.lat.toFixed(6);
-                    document.getElementById('p_lon').value = resultCoords.lon.toFixed(6);
+                const ed50Proj = `+proj=utm +zone=${zone} +ellps=intl +towgs84=-84,-95,-130,0,0,0,0 +units=m +no_defs`;
+                const latlngArray = proj4(ed50Proj, proj4.WGS84, [easting, northing]);
+                
+                if (latlngArray && !isNaN(latlngArray[1]) && !isNaN(latlngArray[0])) {
+                    document.getElementById('p_lat').value = latlngArray[1].toFixed(6);
+                    document.getElementById('p_lon').value = latlngArray[0].toFixed(6);
                     
-                    const latlng = L.latLng(resultCoords.lat, resultCoords.lon);
+                    const latlng = L.latLng(latlngArray[1], latlngArray[0]);
                     kuyuMarker.setLatLng(latlng);
                     map.panTo(latlng);
                 }
             }
-        }
-
-        function utmToLatLng(zone, easting, northing) {
-            const a = 6378388.0; // ED50 / International 1924 Ellipsoid
-            const f = 1.0 / 297.0; 
-            const b = a * (1.0 - f);
-            const e2 = (a*a - b*b) / (a*a);
-            const ePrime2 = (a*a - b*b) / (b*b);
-            
-            const x = easting - 500000.0;
-            const y = northing;
-            
-            const lon0 = (zone - 1) * 6 - 180 + 3; 
-            const lon0Rad = (lon0 * Math.PI) / 180;
-            
-            const k0 = 0.9996;
-            const M = y / k0;
-            
-            const e1 = (1 - Math.sqrt(1 - e2)) / (1 + Math.sqrt(1 - e2));
-            const mu = M / (a * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256));
-            
-            const phi1Rad = mu + (3*e1/2 - 27*e1*e1*e1/32)*Math.sin(2*mu) 
-                           + (21*e1*e1/16 - 55*e1*e1*e1*e1/32)*Math.sin(4*mu)
-                           + (151*e1*e1*e1/96)*Math.sin(6*mu);
-                           
-            const N1 = a / Math.sqrt(1 - e2*Math.sin(phi1Rad)*Math.sin(phi1Rad));
-            const T1 = Math.tan(phi1Rad)*Math.tan(phi1Rad);
-            const C1 = ePrime2*Math.cos(phi1Rad)*Math.cos(phi1Rad);
-            const R1 = a*(1-e2)/Math.pow(1-e2*Math.sin(phi1Rad)*Math.sin(phi1Rad), 1.5);
-            const D = x / (N1*k0);
-            
-            let lat = phi1Rad - (N1*Math.tan(phi1Rad)/R1)*(D*D/2 - (5 + 3*T1 + 10*C1 - 4*C1*C1 - 9*ePrime2)*Math.pow(D,4)/24 
-                      + (61 + 90*T1 + 298*C1 + 45*T1*T1 - 252*ePrime2 - 3*C1*C1)*Math.pow(D,6)/720);
-            let lon = lon0Rad + (D - (1 + 2*T1 + C1)*Math.pow(D,3)/6 
-                      + (5 - 2*C1 + 28*T1 - 3*C1*C1 + 8*ePrime2 + 24*T1*T1)*Math.pow(D,5)/120) / Math.cos(phi1Rad);
-                      
-            return {
-                lat: (lat * 180) / Math.PI,
-                lon: (lon * 180) / Math.PI
-            };
         }
 
         function addLithologyLayer() {
