@@ -585,16 +585,18 @@
                         İş bu kütükte sunulan jeolojik formasyon kesitleri, kuyu teçhiz dizilimi ve akifer verim parametreleri tarafımızca doğrulanarak kayıt altına alınmıştır.
                     </p>
                     <div class="text-center mt-4 mb-2">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Sorumlu Jeoloji Mühendisi</span>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Sorumlu Mühendis</span>
                         <span class="text-[12px] font-bold text-slate-900 block mt-1" id="pdf_sig_eng_p1">Ahmet Yılmaz</span>
                     </div>
                 </div>
             </div>
 
             <!-- SAĞ SÜTUN (%50 Ortalandı) -->
-            <div class="col-span-6 border border-slate-400 rounded p-1.5 flex flex-col items-center justify-between h-full" style="max-height: 260mm;">
-                <span class="text-[11px] font-bold text-blue-900 mb-1 uppercase tracking-wider">Kuyu Şeması</span>
-                <img id="pdf_canvas_img" src="" class="border border-slate-300 rounded w-full h-full object-contain" style="max-height: 245mm;" alt="Kuyu Şeması">
+            <div class="col-span-6 flex flex-col h-full" style="max-height: 260mm;">
+                <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Şeması</h2>
+                <div class="border border-slate-400 rounded p-1 flex-1 flex flex-col items-center justify-center bg-white">
+                    <img id="pdf_canvas_img" src="" class="w-full h-full object-contain" alt="Kuyu Şeması">
+                </div>
             </div>
 
         </div>
@@ -1115,7 +1117,7 @@
             
             // Görüntü Kalitesini Artırmak İçin Ölçekleme İşlemi (High DPI)
             const cssWidth = 300;
-            const cssHeight = 650;
+            const cssHeight = 750; // Kuyu şeması çizim yüksekliği (oranın uzaması için artırıldı)
             const scaleFactor = 3; 
 
             canvas.width = cssWidth * scaleFactor;
@@ -1131,8 +1133,9 @@
             const totalDepth = parseFloat(document.getElementById('p_derinlik').value) || 100;
             document.getElementById('canvasDepthIndicator').innerText = totalDepth + " m";
 
-            const padding = 40; 
-            const drawHeight = canvasHeight - (padding + 25);
+            // İç boşluk iyice küçültüldü (Kuyu şemasının rahat uzaması için)
+            const padding = 35; 
+            const drawHeight = canvasHeight - (padding + 15);
             const scale = drawHeight / totalDepth;
 
             ctx.fillStyle = '#ffffff';
@@ -1314,13 +1317,13 @@
             ctx.fillStyle = '#2563eb';
             ctx.font = 'bold 8px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("JEOLOJİK KESİT", litoLeft + (litoWidth/2), padding - 22);
-            ctx.fillText("TEÇHİZ PLANI", techLeft + (techWidth/2), padding - 22);
+            ctx.fillText("JEOLOJİK KESİT", litoLeft + (litoWidth/2), padding - 20);
+            ctx.fillText("TEÇHİZ PLANI", techLeft + (techWidth/2), padding - 20);
 
             ctx.fillStyle = '#475569';
             ctx.font = 'bold 7.5px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText("Delgi: " + holeSpec, techLeft + (techWidth/2), padding - 12);
+            ctx.fillText("Delgi: " + holeSpec, techLeft + (techWidth/2), padding - 11);
             
             ctx.fillStyle = '#1e3a8a';
             ctx.fillText("Boru: " + pipeSpec, techLeft + (techWidth/2), padding - 3);
