@@ -12,6 +12,8 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- QRious (QR Code Generator) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     
     <style>
         body {
@@ -262,6 +264,7 @@
                                         <option value="Çakıl">Çakıl</option>
                                         <option value="Killi Kum">Killi Kum</option>
                                         <option value="Kumlu Çakıl">Kumlu Çakıl</option>
+                                        <option value="Killi Kumlu Çakıl">Killi Kumlu Çakıl</option>
                                         <option value="Çamurtaşı">Çamurtaşı</option>
                                         <option value="Kumtaşı">Kumtaşı</option>
                                         <option value="Çakıltaşı">Çakıltaşı</option>
@@ -498,73 +501,92 @@
 
                 <!-- Krokiler: Kuyu Başı & Lokasyon (Altlı Üstlü) -->
                 <div class="mb-2 flex flex-col gap-2 flex-1">
-                    <!-- Kuyu Başı Krokisi (Dinamik SVG Vektör) -->
+                    <!-- Kuyu Başı Krokisi & QR Kodlar -->
                     <div>
-                        <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Başı Krokisi</h2>
-                        <div class="border border-slate-400 rounded p-1 flex flex-col h-[125px] bg-white items-center justify-center">
-                            <svg viewBox="0 0 300 260" class="w-full h-full py-1">
-                                <defs>
-                                    <pattern id="gravelPattern" width="15" height="15" patternUnits="userSpaceOnUse">
-                                        <rect width="15" height="15" fill="#f8f9fa"/>
-                                        <path d="M2,2 Q3,1 4,2 Q5,3 4,4 Q3,5 2,4 Z" fill="#666"/>
-                                        <path d="M10,8 Q12,7 13,9 Q11,11 10,10 Z" fill="#999"/>
-                                        <circle cx="8" cy="3" r="1" fill="#444"/>
-                                        <circle cx="3" cy="12" r="1.5" fill="#777"/>
-                                        <circle cx="13" cy="14" r="1" fill="#333"/>
-                                    </pattern>
-                                    <pattern id="concretePattern" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
-                                        <rect width="8" height="8" fill="#e2e8f0"/>
-                                        <line x1="0" y1="0" x2="0" y2="8" stroke="#94a3b8" stroke-width="1.5"/>
-                                    </pattern>
-                                    <marker id="redArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444"/>
-                                    </marker>
-                                    <marker id="blueArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6"/>
-                                    </marker>
-                                    <marker id="blackArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
-                                    </marker>
-                                    <linearGradient id="casingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#f1f5f9"/>
-                                        <stop offset="50%" stop-color="#e2e8f0"/>
-                                        <stop offset="100%" stop-color="#cbd5e1"/>
-                                    </linearGradient>
-                                </defs>
+                        <h2 class="text-[11px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide flex justify-between items-end">
+                            <span>Kuyu Başı Krokisi</span>
+                            <span class="text-[8px] text-slate-500 font-normal">Karekodlar</span>
+                        </h2>
+                        <div class="border border-slate-400 rounded p-1 flex flex-row h-[125px] bg-white items-center justify-between">
+                            
+                            <!-- Kuyu Başı Çizimi -->
+                            <div class="flex-1 flex justify-center items-center h-full border-r border-slate-200 pr-1">
+                                <svg viewBox="0 0 300 260" class="w-full h-full py-1">
+                                    <defs>
+                                        <pattern id="gravelPattern" width="15" height="15" patternUnits="userSpaceOnUse">
+                                            <rect width="15" height="15" fill="#f8f9fa"/>
+                                            <path d="M2,2 Q3,1 4,2 Q5,3 4,4 Q3,5 2,4 Z" fill="#666"/>
+                                            <path d="M10,8 Q12,7 13,9 Q11,11 10,10 Z" fill="#999"/>
+                                            <circle cx="8" cy="3" r="1" fill="#444"/>
+                                            <circle cx="3" cy="12" r="1.5" fill="#777"/>
+                                            <circle cx="13" cy="14" r="1" fill="#333"/>
+                                        </pattern>
+                                        <pattern id="concretePattern" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+                                            <rect width="8" height="8" fill="#e2e8f0"/>
+                                            <line x1="0" y1="0" x2="0" y2="8" stroke="#94a3b8" stroke-width="1.5"/>
+                                        </pattern>
+                                        <marker id="redArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444"/>
+                                        </marker>
+                                        <marker id="blueArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6"/>
+                                        </marker>
+                                        <marker id="blackArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
+                                        </marker>
+                                        <linearGradient id="casingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#f1f5f9"/>
+                                            <stop offset="50%" stop-color="#e2e8f0"/>
+                                            <stop offset="100%" stop-color="#cbd5e1"/>
+                                        </linearGradient>
+                                    </defs>
 
-                                <!-- Ground Surface -->
-                                <line x1="10" y1="75" x2="290" y2="75" stroke="#000" stroke-width="3"/>
+                                    <!-- Ground Surface -->
+                                    <line x1="10" y1="75" x2="290" y2="75" stroke="#000" stroke-width="3"/>
 
-                                <!-- Concrete Base -->
-                                <rect x="40" y="55" width="220" height="20" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
-                                <!-- Concrete Column -->
-                                <rect x="90" y="75" width="120" height="40" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
-                                
-                                <!-- Gravel Column -->
-                                <rect x="90" y="115" width="120" height="115" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                    <!-- Concrete Base -->
+                                    <rect x="40" y="55" width="220" height="20" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                    <!-- Concrete Column -->
+                                    <rect x="90" y="75" width="120" height="40" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                    
+                                    <!-- Gravel Column -->
+                                    <rect x="90" y="115" width="120" height="115" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
 
-                                <!-- Casing Main Body -->
-                                <rect x="110" y="45" width="80" height="185" fill="url(#casingGrad)" stroke="#1e293b" stroke-width="1.5"/>
-                                <ellipse cx="150" cy="45" rx="40" ry="12" fill="#f8fafc" stroke="#1e293b" stroke-width="1.5"/>
-                                <ellipse cx="150" cy="230" rx="40" ry="12" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.5"/>
+                                    <!-- Casing Main Body -->
+                                    <rect x="110" y="45" width="80" height="185" fill="url(#casingGrad)" stroke="#1e293b" stroke-width="1.5"/>
+                                    <ellipse cx="150" cy="45" rx="40" ry="12" fill="#f8fafc" stroke="#1e293b" stroke-width="1.5"/>
+                                    <ellipse cx="150" cy="230" rx="40" ry="12" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.5"/>
 
-                                <!-- Gravel Pipe -->
-                                <rect x="194" y="15" width="12" height="110" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
-                                <ellipse cx="200" cy="15" rx="6" ry="2.5" fill="#fff" stroke="#1e293b" stroke-width="1.5"/>
+                                    <!-- Gravel Pipe -->
+                                    <rect x="194" y="15" width="12" height="110" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                    <ellipse cx="200" cy="15" rx="6" ry="2.5" fill="#fff" stroke="#1e293b" stroke-width="1.5"/>
 
-                                <!-- Annotations -->
-                                <text x="75" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Beton</text>
-                                <line x1="75" y1="35" x2="95" y2="65" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
+                                    <!-- Annotations -->
+                                    <text x="75" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Beton</text>
+                                    <line x1="75" y1="35" x2="95" y2="65" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
 
-                                <text x="260" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Çakıl Borusu</text>
-                                <line x1="250" y1="35" x2="208" y2="50" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
+                                    <text x="260" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Çakıl Borusu</text>
+                                    <line x1="250" y1="35" x2="208" y2="50" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
 
-                                <line x1="112" y1="95" x2="188" y2="95" stroke="#ef4444" stroke-width="2" marker-start="url(#redArrow)" marker-end="url(#redArrow)"/>
-                                <text id="svg_pipe_spec" x="150" y="90" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">225mm</text>
+                                    <line x1="112" y1="95" x2="188" y2="95" stroke="#ef4444" stroke-width="2" marker-start="url(#redArrow)" marker-end="url(#redArrow)"/>
+                                    <text id="svg_pipe_spec" x="150" y="90" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">225mm</text>
 
-                                <line x1="92" y1="165" x2="208" y2="165" stroke="#3b82f6" stroke-width="2" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>
-                                <text id="svg_hole_spec" x="150" y="160" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">15"</text>
-                            </svg>
+                                    <line x1="92" y1="165" x2="208" y2="165" stroke="#3b82f6" stroke-width="2" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>
+                                    <text id="svg_hole_spec" x="150" y="160" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">15"</text>
+                                </svg>
+                            </div>
+
+                            <!-- Karekodlar -->
+                            <div class="w-[70px] flex flex-col items-center justify-center gap-3 pl-1 shrink-0">
+                                <div class="flex flex-col items-center">
+                                    <canvas id="qr_map_canvas" class="w-[42px] h-[42px]"></canvas>
+                                    <span class="text-[6.5px] text-slate-700 font-bold mt-1 text-center leading-tight">Konuma Git</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <canvas id="qr_report_canvas" class="w-[42px] h-[42px]"></canvas>
+                                    <span class="text-[6.5px] text-slate-700 font-bold mt-1 text-center leading-tight">Dijital Rapor</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -636,6 +658,7 @@
             'Çakıl': '#fdba74',
             'Killi Kum': '#fde047',
             'Kumlu Çakıl': '#f97316',
+            'Killi Kumlu Çakıl': '#ea580c',
             'Çamurtaşı': '#b45309',
             'Kumtaşı': '#ca8a04',
             'Çakıltaşı': '#ea580c',
@@ -1049,6 +1072,15 @@
                     tCtx.fillStyle = 'rgba(15, 23, 42, 0.8)';
                     tCtx.fillRect(3, 3, 2, 2);
                     break;
+                case 'Killi Kumlu Çakıl':
+                    tCtx.beginPath();
+                    tCtx.moveTo(0, 15); tCtx.lineTo(18, 15); // Kil yatay çizgisi
+                    tCtx.arc(9, 7, 4, 0, 2 * Math.PI); // Çakıl çemberi
+                    tCtx.stroke();
+                    tCtx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+                    tCtx.fillRect(2, 2, 1.5, 1.5); // Kum noktası
+                    tCtx.fillRect(14, 10, 1.5, 1.5); // Kum noktası
+                    break;
                 case 'Çamurtaşı':
                     tCtx.beginPath();
                     tCtx.moveTo(0, 6); tCtx.lineTo(18, 6);
@@ -1422,6 +1454,27 @@
             callback(canvas.toDataURL('image/png'));
         }
 
+        function generateQRCodes() {
+            const lat = document.getElementById('p_lat').value;
+            const lon = document.getElementById('p_lon').value;
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+            const reportUrl = window.location.href; // Geçerli sayfanın adresi
+
+            new QRious({
+                element: document.getElementById('qr_map_canvas'),
+                value: mapUrl,
+                size: 150,
+                level: 'M'
+            });
+
+            new QRious({
+                element: document.getElementById('qr_report_canvas'),
+                value: reportUrl,
+                size: 150,
+                level: 'M'
+            });
+        }
+
         // --- YERLEŞİK YAZDIRMA (NATIVE PRINT) ÇÖZÜMÜ ---
         function prepareAndPrint() {
             if (lithologies.length === 0) {
@@ -1472,6 +1525,9 @@
             // Kuyu Başı Krokisindeki Değerleri Dinamik Olarak Güncelle
             document.getElementById('svg_pipe_spec').textContent = document.getElementById('tech_pipe_spec').value;
             document.getElementById('svg_hole_spec').textContent = document.getElementById('tech_hole_spec').value;
+
+            // QR Kodları Oluştur
+            generateQRCodes();
 
             // 4. Çizim Tahtasını Sabit Görsele Çevir
             const mainCanvas = document.getElementById('logCanvas');
