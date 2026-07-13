@@ -60,7 +60,7 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0mm; /* Tarayıcı üst/alt bilgilerini kapatır */
+                margin: 0mm;
             }
             body {
                 -webkit-print-color-adjust: exact !important;
@@ -73,11 +73,9 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            /* Arayüz elemanlarını yazdırırken gizle */
             header, main, #toast {
                 display: none !important;
             }
-            /* Sadece rapor alanını göster */
             #print-area {
                 display: flex !important;
                 position: absolute;
@@ -86,7 +84,7 @@
                 width: 210mm;
                 height: 297mm;
                 margin: 0;
-                padding: 10mm; /* Güvenli A4 kenar boşlukları */
+                padding: 10mm;
                 box-sizing: border-box;
                 page-break-after: avoid;
                 page-break-before: avoid;
@@ -107,7 +105,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl md:text-2xl font-bold tracking-tight">GeoLog Pro</h1>
-                    <p class="text-xs text-blue-300">Profesyonel Kuyu Sondaj Logu & Hidrojeolojik Teçhiz Editörü</p>
+                    <p class="text-xs text-blue-300">Kuyu Logu Editörü</p>
                 </div>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -132,12 +130,12 @@
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                     <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
                         <i class="fa-solid fa-building text-blue-600 text-lg"></i>
-                        <h2 class="text-base font-bold text-slate-800">Yüklenici Firma & Proje Künyesi</h2>
+                        <h2 class="text-base font-bold text-slate-800">Kuyu Künyesi</h2>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-500 mb-1">YÜKLENİCİ FİRMA ADI</label>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">FİRMA ADI</label>
                             <input type="text" id="firm_name" value="Yeryüzü Jeoteknik, Sondaj ve Müşavirlik Ltd. Şti." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
@@ -146,22 +144,38 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">KUYU SAHİBİ</label>
                             <input type="text" id="p_client" value="Doğa Tarım ve Hayvancılık A.Ş." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">İL / İLÇE / MAHALLE</label>
-                            <input type="text" id="p_location" value="Bursa / Yenişehir / Çeltikçi" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">İL</label>
+                            <select id="p_il" onchange="populateIlce()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">ADA / PARSEL</label>
-                            <input type="text" id="p_mevkii" value="104 Ada 12 Parsel" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">İLÇE</label>
+                            <select id="p_ilce" onchange="populateMahalle()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">MAHALLE</label>
+                            <select id="p_mahalle" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></select>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">ADA</label>
+                            <input type="text" id="p_ada" value="104" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">PARSEL</label>
+                            <input type="text" id="p_parsel" value="12" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">TARİHİ</label>
+                            <input type="date" id="p_tarih" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 mb-1">DERİNLİK (m)</label>
                             <input type="number" id="p_derinlik" value="100" oninput="drawCanvasLog()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -170,14 +184,11 @@
                             <label class="block text-xs font-bold text-slate-500 mb-1">KUYU AMACI</label>
                             <input type="text" id="p_amaci" value="Endüstriyel & Sulama Suyu" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-bold text-slate-500 mb-1">RAPOR TARİHİ</label>
-                            <input type="date" id="p_tarih" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        <div class="md:col-span-4">
-                            <label class="block text-xs font-bold text-slate-500 mb-1">KOORDİNAT (ZONE / E / N)</label>
-                            <input type="text" id="p_koordinat" value="35 N 641250 D – 4485120 K" oninput="updateMapFromUtm()" class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Örn: 35 N 641250 D – 4485120 K">
-                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 mt-4">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">KOORDİNAT (ZONE / E / N)</label>
+                        <input type="text" id="p_koordinat" value="35 N 641250 D – 4485120 K" oninput="updateMapFromUtm()" class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Örn: 35 N 641250 D – 4485120 K">
                     </div>
                 </div>
 
@@ -186,7 +197,7 @@
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-map-location-dot text-indigo-600 text-lg"></i>
-                            <h2 class="text-base font-bold text-slate-800">Kuyu Lokasyon Krokisi & Coğrafi Konum</h2>
+                            <h2 class="text-base font-bold text-slate-800">Kuyu Lokasyon Krokisi</h2>
                         </div>
                         <span class="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-bold">Uydu Görüntüsü</span>
                     </div>
@@ -212,7 +223,7 @@
                         <i class="fa-solid fa-droplet text-blue-500 text-lg"></i>
                         <h2 class="text-base font-bold text-slate-800">Pompa Deney & Akifer Verimleri</h2>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-blue-800 mb-1">KUYU VERİMİ / DEBİ (Q - lt/s)</label>
                             <input type="number" step="0.1" id="v_debi" value="12" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -224,6 +235,10 @@
                         <div>
                             <label class="block text-xs font-bold text-blue-800 mb-1">DİNAMİK SEVİYE (m)</label>
                             <input type="number" step="0.1" id="v_dinamik" value="34" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-blue-800 mb-1">ÇALIŞMA SÜRESİ (Saat)</label>
+                            <input type="number" step="1" id="v_sure" value="24" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                     </div>
                 </div>
@@ -292,9 +307,9 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-1">FİLTRE BAŞLANGIÇ METRELERİ (Virgülle Ayırın)</label>
-                                    <input type="text" id="filterDepthsInput" value="36, 48, 64, 80" class="w-full bg-emerald-50 border border-emerald-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-mono outline-none" placeholder="Örn: 30, 52, 74">
+                                    <input type="text" id="filterDepthsInput" value="36, 48, 64, 80" oninput="autoGenerateBoringDesign()" class="w-full bg-emerald-50 border border-emerald-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-mono outline-none" placeholder="Örn: 30, 52, 74">
                                     <p class="text-[10px] text-slate-500 mt-1 italic">
-                                        * Belirttiğiniz her metreye otomatik 4 metre filtre (örn: 36 -> 36-40 m) yerleştirilir.
+                                        * Belirttiğiniz her metreye otomatik 4 metre filtre (örn: 36 -> 36-40 m) yerleştirilir. Kuyu grafiğinde otomatik güncellenir.
                                     </p>
                                 </div>
 
@@ -303,24 +318,15 @@
                                     <div class="grid grid-cols-2 gap-2 mt-1">
                                         <div>
                                             <span class="text-[9px] font-bold text-slate-400 block">BORU TÜRÜ/ÇAPI</span>
-                                            <input type="text" id="tech_pipe_spec" value="140 mm PVC" oninput="drawCanvasLog()" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
+                                            <input type="text" id="tech_pipe_spec" value="140 mm PVC" oninput="autoGenerateBoringDesign()" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
                                         </div>
                                         <div>
                                             <span class="text-[9px] font-bold text-slate-400 block">SONDAJ DELİK ÇAPI</span>
-                                            <input type="text" id="tech_hole_spec" value="12 1/4\" Süzgeci" oninput="drawCanvasLog()" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
+                                            <input type="text" id="tech_hole_spec" value="12 1/4\&quot; Süzgeci" oninput="drawCanvasLog()" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-2 mt-4">
-                            <button onclick="processFiltersOnly()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow">
-                                <i class="fa-solid fa-list-ol"></i> Filtreleri İşle
-                            </button>
-                            <button onclick="autoGenerateBoringDesign()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Boruları Dizayn Et
-                            </button>
                         </div>
                     </div>
 
@@ -331,12 +337,12 @@
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-clipboard-list text-slate-700"></i>
-                            <h3 class="font-bold text-sm text-slate-800">Kuyu İnşaat ve Jeoloji Veri Cetvelleri</h3>
+                            <h3 class="font-bold text-sm text-slate-800">Jeolojik Katmanlar</h3>
                         </div>
                         <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold">Veri Giriş Paneli</span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-6">
                         
                         <!-- Litoloji Cetveli -->
                         <div>
@@ -355,29 +361,6 @@
                                     <tbody class="divide-y divide-slate-100" id="litoTableBody">
                                         <tr>
                                             <td colspan="3" class="p-4 text-center text-slate-400 italic">Litoloji tablosu boş.</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Teçhiz Cetveli -->
-                        <div>
-                            <h4 class="text-xs font-bold text-emerald-600 mb-2 flex items-center gap-1">
-                                <i class="fa-solid fa-arrows-up-down"></i> Borulama & Teçhiz Dizilimi
-                            </h4>
-                            <div class="overflow-y-auto max-h-[220px] border border-slate-150 rounded-lg">
-                                <table class="w-full text-left text-xs border-collapse" id="techTable">
-                                    <thead>
-                                        <tr class="bg-slate-100 border-b border-slate-200 sticky top-0">
-                                            <th class="p-2 font-bold text-slate-600">Boru Kotları (m)</th>
-                                            <th class="p-2 font-bold text-slate-600">Boru Karakteri</th>
-                                            <th class="p-2 font-bold text-slate-600 text-center">İşlem</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-100" id="techTableBody">
-                                        <tr>
-                                            <td colspan="3" class="p-4 text-center text-slate-400 italic">Teçhiz verisi girilmedi.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -403,7 +386,6 @@
                     <!-- Çizim Tahtası (BEYAZ ARKA PLAN) -->
                     <div class="flex justify-center bg-slate-100 rounded-xl p-3 shadow-inner border border-slate-200">
                         <div class="relative w-full max-h-[580px] overflow-y-auto flex justify-center">
-                            <!-- Ekranda görünüm boyutu style ile, gerçek kalite width ve height özellikleri ile sağlanacak -->
                             <canvas id="logCanvas" class="bg-white rounded border border-slate-300"></canvas>
                         </div>
                     </div>
@@ -434,9 +416,8 @@
     <div id="print-area" class="flex-col justify-between">
         
         <!-- Page Header -->
-        <div class="border-b-2 border-slate-800 pb-1 mb-1.5">
-            <h1 id="pdf_firm_name" class="text-[14px] font-bold text-slate-900 uppercase">YÜKLENİCİ FİRMA ADI</h1>
-            <p class="text-[9px] text-slate-500 font-semibold tracking-wider">SONDAJ KUYU İNŞAAT KÜTÜĞÜ VE HİDROJEOLOJİK LOG RAPORU</p>
+        <div class="border-b-2 border-slate-800 pb-1 mb-1.5 text-center">
+            <h1 class="text-[18px] font-bold text-slate-900 uppercase">KUYU KÜTÜĞÜ</h1>
         </div>
 
         <!-- Single Page Layout Grid (Strict Height Contraints) -->
@@ -451,7 +432,11 @@
                     <table class="w-full text-[9.5px] border-collapse border border-slate-400">
                         <tbody>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold w-[35%]">Sorumlu Mühendis</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold w-[35%]">Firma Adı</td>
+                                <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_firm_name_td">-</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Sorumlu Mühendis</td>
                                 <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_responsible_eng">-</td>
                             </tr>
                             <tr>
@@ -483,7 +468,7 @@
                                 <td class="border border-slate-400 p-1.5 text-slate-800" id="pdf_pipe_spec_val">-</td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Rapor Tarihi</td>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-bold">Tarihi</td>
                                 <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_tarih_val">-</td>
                             </tr>
                         </tbody>
@@ -506,6 +491,10 @@
                             <tr>
                                 <td class="border border-slate-400 bg-slate-100 p-1.5 font-semibold">Dinamik Seviye (D.S.S)</td>
                                 <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_hyd_dinamik">-</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-400 bg-slate-100 p-1.5 font-semibold">Pompa Çalışma Süresi</td>
+                                <td class="border border-slate-400 p-1.5 font-mono text-slate-800" id="pdf_hyd_sure">-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -553,6 +542,57 @@
         let map;
         let kuyuMarker;
         let isSatellite = true;
+
+        // İl ve İlçe/Mahalle Verileri
+        const iller = [
+            "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Isparta", "Mersin", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"
+        ];
+        
+        const ilceData = {
+            "Ankara": ["Çankaya", "Keçiören", "Yenimahalle", "Mamak", "Etimesgut", "Sincan", "Altındağ"],
+            "Bursa": ["Nilüfer", "Osmangazi", "Yenişehir", "Yıldırım", "İnegöl", "Gemlik", "Mudanya"],
+            "İstanbul": ["Kadıköy", "Beşiktaş", "Şişli", "Üsküdar", "Beyoğlu", "Maltepe", "Sarıyer"],
+            "İzmir": ["Bornova", "Karşıyaka", "Konak", "Buca", "Gaziemir", "Karabağlar"]
+        };
+        const genelMahalleler = ["Merkez Mahallesi", "Atatürk Mahallesi", "Cumhuriyet Mahallesi", "Yeni Mahalle", "Fatih Mahallesi", "İstiklal Mahallesi", "Çeltikçi"];
+
+        function populateIl() {
+            const ilSelect = document.getElementById('p_il');
+            iller.forEach(il => {
+                let opt = document.createElement('option');
+                opt.value = il;
+                opt.innerText = il;
+                ilSelect.appendChild(opt);
+            });
+            ilSelect.value = "Bursa"; 
+            populateIlce();
+        }
+
+        function populateIlce() {
+            const il = document.getElementById('p_il').value;
+            const ilceSelect = document.getElementById('p_ilce');
+            ilceSelect.innerHTML = "";
+            
+            const ilceler = ilceData[il] || ["Merkez", "Diğer"];
+            ilceler.forEach(ilce => {
+                let opt = document.createElement('option');
+                opt.value = ilce;
+                opt.innerText = ilce;
+                ilceSelect.appendChild(opt);
+            });
+            populateMahalle();
+        }
+
+        function populateMahalle() {
+            const mahalleSelect = document.getElementById('p_mahalle');
+            mahalleSelect.innerHTML = "";
+            genelMahalleler.forEach(mah => {
+                let opt = document.createElement('option');
+                opt.value = mah;
+                opt.innerText = mah;
+                mahalleSelect.appendChild(opt);
+            });
+        }
 
         // Leaflet Harita Katmanları (Esri & OSM)
         const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -772,40 +812,7 @@
             showToast("Jeolojik katman eklendi.", "success");
         }
 
-        function processFiltersOnly() {
-            const rawVal = document.getElementById('filterDepthsInput').value;
-            const totalDepth = parseFloat(document.getElementById('p_derinlik').value) || 100;
-            const pipeSpec = document.getElementById('tech_pipe_spec').value || "140 mm PVC";
-
-            const starts = rawVal.split(',')
-                                 .map(v => parseFloat(v.trim()))
-                                 .filter(v => !isNaN(v) && v >= 0 && v < totalDepth);
-
-            if(starts.length === 0) {
-                showToast("Geçerli filtre başlangıç metreleri girin!", "error");
-                return;
-            }
-
-            techLayers = techLayers.filter(t => t.type !== 'Filtreli');
-
-            starts.forEach(start => {
-                let end = start + 4;
-                if(end > totalDepth) end = totalDepth;
-                techLayers.push({
-                    type: 'Filtreli',
-                    start: start,
-                    end: end,
-                    thick: end - start,
-                    size: pipeSpec + " Süzgeçli"
-                });
-            });
-
-            techLayers.sort((a, b) => a.start - b.start);
-            updateTechTable();
-            drawCanvasLog();
-            showToast("Filtre yerleri 4'er metre olarak işlendi.", "success");
-        }
-
+        // Otomatik Borulama/Teçhiz Üretimi (Tetiklemeli)
         function autoGenerateBoringDesign() {
             const rawVal = document.getElementById('filterDepthsInput').value;
             const totalDepth = parseFloat(document.getElementById('p_derinlik').value) || 100;
@@ -816,49 +823,57 @@
                                  .filter(v => !isNaN(v) && v >= 0 && v < totalDepth)
                                  .sort((a,b) => a - b);
 
-            if(starts.length === 0) {
-                showToast("Önce filtre başlangıç metrelerini girmelisiniz!", "error");
-                return;
-            }
-
             techLayers = [];
-            let currentPointer = 0;
+            
+            if(starts.length === 0) {
+                // Eğer filtre girilmemişse, kuyu tabanına kadar tamamen kapalı boru yap
+                techLayers.push({
+                    type: 'Kapalı',
+                    start: 0,
+                    end: totalDepth,
+                    thick: totalDepth,
+                    size: pipeSpec
+                });
+            } else {
+                let currentPointer = 0;
 
-            starts.forEach(fStart => {
-                if (fStart > currentPointer) {
+                starts.forEach(fStart => {
+                    if (fStart > currentPointer) {
+                        techLayers.push({
+                            type: 'Kapalı',
+                            start: currentPointer,
+                            end: fStart,
+                            thick: fStart - currentPointer,
+                            size: pipeSpec
+                        });
+                    }
+
+                    let fEnd = fStart + 4;
+                    if (fEnd > totalDepth) fEnd = totalDepth;
+                    
+                    techLayers.push({
+                        type: 'Filtreli',
+                        start: fStart,
+                        end: fEnd,
+                        thick: fEnd - fStart,
+                        size: pipeSpec + " Süzgeçli"
+                    });
+
+                    currentPointer = fEnd;
+                });
+
+                if (currentPointer < totalDepth) {
                     techLayers.push({
                         type: 'Kapalı',
                         start: currentPointer,
-                        end: fStart,
-                        thick: fStart - currentPointer,
+                        end: totalDepth,
+                        thick: totalDepth - currentPointer,
                         size: pipeSpec
                     });
                 }
-
-                let fEnd = fStart + 4;
-                if (fEnd > totalDepth) fEnd = totalDepth;
-                
-                techLayers.push({
-                    type: 'Filtreli',
-                    start: fStart,
-                    end: fEnd,
-                    thick: fEnd - fStart,
-                    size: pipeSpec + " Süzgeçli"
-                });
-
-                currentPointer = fEnd;
-            });
-
-            if (currentPointer < totalDepth) {
-                techLayers.push({
-                    type: 'Kapalı',
-                    start: currentPointer,
-                    end: totalDepth,
-                    thick: totalDepth - currentPointer,
-                    size: pipeSpec
-                });
             }
 
+            // Kuyu çevresi çakılı
             techLayers.push({
                 type: 'Çakıl',
                 start: 0,
@@ -867,9 +882,7 @@
                 size: "2-4 mm Kuyu Çakılı"
             });
 
-            updateTechTable();
             drawCanvasLog();
-            showToast("Komple kuyu teçhiz dizilimi akıllıca üretildi!", "success");
         }
 
         function updateLitoTable() {
@@ -892,35 +905,9 @@
             `).join('');
         }
 
-        function updateTechTable() {
-            const tbody = document.getElementById('techTableBody');
-            if (techLayers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">Teçhiz verisi girilmedi.</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = techLayers.map((t, index) => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="p-2 text-slate-700 font-mono">${t.start} - ${t.end} m</td>
-                    <td class="p-2 text-slate-600">
-                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${t.type==='Filtreli' ? 'bg-orange-100 text-orange-700' : t.type==='Kapalı' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}">${t.type}</span>
-                        <span class="text-[11px] font-mono text-slate-500 ml-1">${t.size}</span>
-                    </td>
-                    <td class="p-2 text-center">
-                        <button onclick="deleteTech(${index})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
         function deleteLito(index) {
             lithologies.splice(index, 1);
             updateLitoTable();
-            drawCanvasLog();
-        }
-
-        function deleteTech(index) {
-            techLayers.splice(index, 1);
-            updateTechTable();
             drawCanvasLog();
         }
 
@@ -928,9 +915,9 @@
             lithologies = [];
             techLayers = [];
             document.getElementById('litStartD').value = "0";
+            document.getElementById('filterDepthsInput').value = "";
             updateLitoTable();
-            updateTechTable();
-            drawCanvasLog();
+            autoGenerateBoringDesign();
             showToast("Tüm veriler temizlendi.", "info");
         }
 
@@ -938,8 +925,17 @@
             document.getElementById('firm_name').value = "Mega Altyapı Sondaj & Geoteknik Müşavirlik";
             document.getElementById('firm_engineer').value = "Kemal Alkan (Jeoloji Yüksek Mühendisi)";
             document.getElementById('p_client').value = "Yıldız Tekstil Sanayi Ltd. Şti.";
-            document.getElementById('p_location').value = "Bursa / Yenişehir / Çeltikçi";
-            document.getElementById('p_mevkii').value = "104 Ada 12 Parsel";
+            
+            // İl, İlçe, Mahalle Listelerini Doldur
+            document.getElementById('p_il').value = "Bursa";
+            populateIlce();
+            document.getElementById('p_ilce').value = "Yenişehir";
+            populateMahalle();
+            document.getElementById('p_mahalle').value = "Çeltikçi";
+            
+            document.getElementById('p_ada').value = "104";
+            document.getElementById('p_parsel').value = "12";
+            
             document.getElementById('p_derinlik').value = "90";
             document.getElementById('p_amaci').value = "Kullanım ve Proses Suyu";
 
@@ -950,6 +946,7 @@
             document.getElementById('v_debi').value = "15";
             document.getElementById('v_statik').value = "18";
             document.getElementById('v_dinamik').value = "48";
+            document.getElementById('v_sure').value = "24";
 
             lithologies = [
                 { type: 'Bitkisel Toprak', start: 0, end: 3, thick: 3 },
@@ -962,6 +959,7 @@
                 { type: 'Kireçtaşı', start: 72, end: 90, thick: 18 }
             ];
 
+            updateLitoTable();
             document.getElementById('filterDepthsInput').value = "36, 44, 60, 68";
 
             autoGenerateBoringDesign();
@@ -1106,7 +1104,7 @@
             // Görüntü Kalitesini Artırmak İçin Ölçekleme İşlemi (High DPI)
             const cssWidth = 300;
             const cssHeight = 650;
-            const scaleFactor = 3; // 3x Yüksek çözünürlük oranı
+            const scaleFactor = 3; 
 
             canvas.width = cssWidth * scaleFactor;
             canvas.height = cssHeight * scaleFactor;
@@ -1115,7 +1113,6 @@
 
             ctx.scale(scaleFactor, scaleFactor);
 
-            // Geri kalan çizim koordinatları cssWidth ve cssHeight üzerinden devam eder
             const canvasWidth = cssWidth;
             const canvasHeight = cssHeight;
             
@@ -1216,11 +1213,9 @@
                         let chunkY = padding + (currentChunkStart * scale);
                         let chunkH = (currentChunkEnd - currentChunkStart) * scale;
 
-                        // Kapalı Boru Arkaplan
                         ctx.fillStyle = 'rgba(128, 128, 128, 0.2)';
                         ctx.fillRect(pipeLeft, chunkY, pipeWidth, chunkH);
 
-                        // Kenarlıklar (Alt-Üst ve Sağ-Sol Çizgileri)
                         ctx.strokeStyle = '#666666';
                         ctx.lineWidth = 1;
                         ctx.setLineDash([]);
@@ -1228,7 +1223,6 @@
                         ctx.rect(pipeLeft, chunkY, pipeWidth, chunkH);
                         ctx.stroke();
 
-                        // Etiket Kutusu ve Yazısı
                         let text = `Kapalı ${currentChunkStart}-${currentChunkEnd}`;
                         ctx.font = '8px sans-serif';
                         let textW = ctx.measureText(text).width + 4;
@@ -1236,7 +1230,6 @@
                         let labelX = pipeLeft + (pipeWidth / 2) - (textW / 2);
                         let labelY = chunkY + (chunkH / 2) - (textH / 2);
 
-                        // Dar alanlarda yazının taşmasını önlemek için kontrol
                         if (chunkH >= 11) {
                             ctx.fillStyle = '#ffffff';
                             ctx.fillRect(labelX, labelY, textW, textH);
@@ -1253,20 +1246,17 @@
                     }
                 } 
                 else if (t.type === 'Filtreli') {
-                    // Filtre Arkaplan
                     ctx.fillStyle = 'rgba(0, 0, 255, 0.1)';
                     ctx.fillRect(pipeLeft, y, pipeWidth, h);
 
-                    // Kenarlıklar (Kesik Çizgili)
                     ctx.strokeStyle = '#0000ff';
                     ctx.lineWidth = 1;
                     ctx.setLineDash([3, 3]);
                     ctx.beginPath();
                     ctx.rect(pipeLeft, y, pipeWidth, h);
                     ctx.stroke();
-                    ctx.setLineDash([]); // Reset
+                    ctx.setLineDash([]);
 
-                    // Etiket Kutusu ve Yazısı
                     let text = `Filtre ${t.start}-${t.end}`;
                     ctx.font = '8px sans-serif';
                     let textW = ctx.measureText(text).width + 4;
@@ -1331,7 +1321,6 @@
             
             const canvas = document.createElement('canvas');
             
-            // Harita çıktısının çok daha yüksek kaliteli olması için ölçekliyoruz (4x)
             const scaleFactor = 4;
             canvas.width = mapContainer.offsetWidth * scaleFactor;
             canvas.height = mapContainer.offsetHeight * scaleFactor;
@@ -1413,12 +1402,13 @@
             showToast("Baskı önizleme hazırlanıyor, lütfen bekleyin...", "info");
 
             // 1. Yazdırılacak form alanlarını senkronize et
-            document.getElementById('pdf_firm_name').innerText = document.getElementById('firm_name').value.toUpperCase();
+            document.getElementById('pdf_firm_name_td').innerText = document.getElementById('firm_name').value;
             document.getElementById('pdf_kuyu_amaci').innerText = document.getElementById('p_amaci').value;
             document.getElementById('pdf_responsible_eng').innerText = document.getElementById('firm_engineer').value;
             document.getElementById('pdf_client_val').innerText = document.getElementById('p_client').value;
-            document.getElementById('pdf_location_val').innerText = document.getElementById('p_location').value;
-            document.getElementById('pdf_mevkii_val').innerText = document.getElementById('p_mevkii').value;
+            
+            document.getElementById('pdf_location_val').innerText = document.getElementById('p_il').value + " / " + document.getElementById('p_ilce').value + " / " + document.getElementById('p_mahalle').value;
+            document.getElementById('pdf_mevkii_val').innerText = document.getElementById('p_ada').value + " Ada / " + document.getElementById('p_parsel').value + " Parsel";
             
             document.getElementById('pdf_utm_val').innerText = document.getElementById('p_koordinat').value;
             document.getElementById('pdf_depth_val').innerText = document.getElementById('p_derinlik').value + " Metre";
@@ -1436,10 +1426,12 @@
             const debiVal = parseFloat(document.getElementById('v_debi').value) || 0;
             const statikVal = parseFloat(document.getElementById('v_statik').value) || 0;
             const dinamikVal = parseFloat(document.getElementById('v_dinamik').value) || 0;
+            const sureVal = parseFloat(document.getElementById('v_sure').value) || 0;
 
             document.getElementById('pdf_hyd_debi').innerText = debiVal + " lt/sn";
             document.getElementById('pdf_hyd_statik').innerText = statikVal + " m";
             document.getElementById('pdf_hyd_dinamik').innerText = dinamikVal + " m";
+            document.getElementById('pdf_hyd_sure').innerText = sureVal + " Saat";
             
             document.getElementById('pdf_sig_eng_p1').innerText = document.getElementById('firm_engineer').value;
 
@@ -1461,8 +1453,9 @@
         }
 
         window.onload = function() {
+            populateIl(); // İl/İlçe Select'lerini doldur
             initMap();
-            drawCanvasLog();
+            autoGenerateBoringDesign(); // Filtreyi çizim ve verilere işle
             convertToUtm();
             // Otomatik olarak bugünün tarihini atar
             document.getElementById('p_tarih').valueAsDate = new Date();
