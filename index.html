@@ -516,12 +516,85 @@
                     </table>
                 </div>
 
-                <!-- Harita Resmi -->
-                <div class="mt-2">
-                    <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Lokasyon Krokisi</h2>
-                    <div class="border border-slate-400 rounded p-1 flex flex-col">
-                        <div id="pdf_map_image_container" class="w-full h-[180px] bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300">
-                            <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Konum Krokisi">
+                <!-- Krokiler: Kuyu Başı & Lokasyon (Yan Yana) -->
+                <div class="mt-2 grid grid-cols-2 gap-3">
+                    <!-- Kuyu Başı Krokisi (Dinamik SVG Vektör) -->
+                    <div>
+                        <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Başı Krokisi</h2>
+                        <div class="border border-slate-400 rounded p-1 flex flex-col h-[150px] bg-white items-center justify-center">
+                            <svg viewBox="0 0 300 230" class="w-full h-full">
+                                <defs>
+                                    <pattern id="gravelPattern" width="15" height="15" patternUnits="userSpaceOnUse">
+                                        <rect width="15" height="15" fill="#f8f9fa"/>
+                                        <path d="M2,2 Q3,1 4,2 Q5,3 4,4 Q3,5 2,4 Z" fill="#666"/>
+                                        <path d="M10,8 Q12,7 13,9 Q11,11 10,10 Z" fill="#999"/>
+                                        <circle cx="8" cy="3" r="1" fill="#444"/>
+                                        <circle cx="3" cy="12" r="1.5" fill="#777"/>
+                                        <circle cx="13" cy="14" r="1" fill="#333"/>
+                                    </pattern>
+                                    <pattern id="concretePattern" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+                                        <rect width="8" height="8" fill="#e2e8f0"/>
+                                        <line x1="0" y1="0" x2="0" y2="8" stroke="#94a3b8" stroke-width="1.5"/>
+                                    </pattern>
+                                    <marker id="redArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444"/>
+                                    </marker>
+                                    <marker id="blueArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6"/>
+                                    </marker>
+                                    <marker id="blackArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
+                                    </marker>
+                                    <linearGradient id="casingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#f1f5f9"/>
+                                        <stop offset="50%" stop-color="#e2e8f0"/>
+                                        <stop offset="100%" stop-color="#cbd5e1"/>
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- Ground Surface -->
+                                <line x1="10" y1="75" x2="290" y2="75" stroke="#000" stroke-width="3"/>
+
+                                <!-- Concrete Base -->
+                                <rect x="40" y="55" width="220" height="20" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                <!-- Concrete Column -->
+                                <rect x="90" y="75" width="120" height="40" fill="url(#concretePattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                
+                                <!-- Gravel Column -->
+                                <rect x="90" y="115" width="120" height="105" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+
+                                <!-- Casing Main Body -->
+                                <rect x="110" y="45" width="80" height="175" fill="url(#casingGrad)" stroke="#1e293b" stroke-width="1.5"/>
+                                <ellipse cx="150" cy="45" rx="40" ry="12" fill="#f8fafc" stroke="#1e293b" stroke-width="1.5"/>
+                                <ellipse cx="150" cy="220" rx="40" ry="12" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.5"/>
+
+                                <!-- Gravel Pipe -->
+                                <rect x="194" y="15" width="12" height="100" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                <ellipse cx="200" cy="15" rx="6" ry="2.5" fill="#fff" stroke="#1e293b" stroke-width="1.5"/>
+
+                                <!-- Annotations -->
+                                <text x="75" y="30" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Beton</text>
+                                <line x1="75" y1="35" x2="95" y2="65" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
+
+                                <text x="240" y="30" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Çakıl Borusu</text>
+                                <line x1="230" y1="35" x2="202" y2="50" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
+
+                                <line x1="112" y1="95" x2="188" y2="95" stroke="#ef4444" stroke-width="2" marker-start="url(#redArrow)" marker-end="url(#redArrow)"/>
+                                <text id="svg_pipe_spec" x="150" y="90" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">225mm</text>
+
+                                <line x1="92" y1="165" x2="208" y2="165" stroke="#3b82f6" stroke-width="2" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>
+                                <text id="svg_hole_spec" x="150" y="160" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">15"</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Harita Resmi -->
+                    <div>
+                        <h2 class="text-[10.5px] font-bold text-blue-800 border-b border-slate-300 pb-1 mb-1.5 uppercase tracking-wide">Kuyu Lokasyon Krokisi</h2>
+                        <div class="border border-slate-400 rounded p-1 flex flex-col h-[150px]">
+                            <div id="pdf_map_image_container" class="w-full h-full bg-slate-100 flex items-center justify-center relative overflow-hidden rounded border border-slate-300">
+                                <img id="pdf_map_static_img" class="absolute inset-0 w-full h-full object-cover" src="" alt="Konum Krokisi">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1397,6 +1470,10 @@
             document.getElementById('pdf_hyd_sure').innerText = sureVal + " Saat";
             
             document.getElementById('pdf_sig_eng_p1').innerText = document.getElementById('firm_engineer').value;
+
+            // Kuyu Başı Krokisindeki Değerleri Dinamik Olarak Güncelle
+            document.getElementById('svg_pipe_spec').textContent = document.getElementById('tech_pipe_spec').value;
+            document.getElementById('svg_hole_spec').textContent = document.getElementById('tech_hole_spec').value;
 
             // 4. Çizim Tahtasını Sabit Görsele Çevir
             const mainCanvas = document.getElementById('logCanvas');
