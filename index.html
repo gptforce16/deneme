@@ -1207,7 +1207,8 @@
                     ctx.fillStyle = '#475569';
                     for(let py = y + 4; py < y + h; py += 12) {
                         ctx.fillRect(techLeft + 4, py, 2.5, 2.5);
-                        ctx.fillRect(techLeft + techWidth - 10, py + 3, 2.5, 2.5);
+                        // Sağ taraftaki +3 offset kaldırıldı, noktalar hizalandı
+                        ctx.fillRect(techLeft + techWidth - 10, py, 2.5, 2.5);
                     }
                 }
             });
