@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <!-- QRious (QR Code Generator) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <!-- LZ-String (URL Compression) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     
     <style>
         body {
@@ -558,34 +560,33 @@
                                     <ellipse cx="150" cy="230" rx="40" ry="12" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.5"/>
 
                                     <!-- Gravel Pipe -->
-                                    <rect x="194" y="15" width="12" height="110" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
-                                    <ellipse cx="200" cy="15" rx="6" ry="2.5" fill="#fff" stroke="#1e293b" stroke-width="1.5"/>
+                                <rect x="194" y="15" width="12" height="110" fill="url(#gravelPattern)" stroke="#1e293b" stroke-width="1.5"/>
+                                <ellipse cx="200" cy="15" rx="6" ry="2.5" fill="#fff" stroke="#1e293b" stroke-width="1.5"/>
 
-                                    <!-- Annotations -->
-                                    <text x="75" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Beton</text>
-                                    <line x1="75" y1="35" x2="95" y2="65" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
+                                <!-- Annotations -->
+                                <text x="75" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Beton</text>
+                                <line x1="75" y1="35" x2="95" y2="65" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
 
-                                    <text x="260" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Çakıl Borusu</text>
-                                    <line x1="250" y1="35" x2="208" y2="50" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
+                                <text x="260" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="16" fill="#1e293b" text-anchor="middle">Çakıl Borusu</text>
+                                <line x1="250" y1="35" x2="208" y2="50" stroke="#1e293b" stroke-width="2" marker-end="url(#blackArrow)"/>
 
-                                    <line x1="112" y1="95" x2="188" y2="95" stroke="#ef4444" stroke-width="2" marker-start="url(#redArrow)" marker-end="url(#redArrow)"/>
-                                    <text id="svg_pipe_spec" x="150" y="90" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">225mm</text>
+                                <line x1="112" y1="95" x2="188" y2="95" stroke="#ef4444" stroke-width="2" marker-start="url(#redArrow)" marker-end="url(#redArrow)"/>
+                                <text id="svg_pipe_spec" x="150" y="90" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">225mm</text>
 
-                                    <line x1="92" y1="165" x2="208" y2="165" stroke="#3b82f6" stroke-width="2" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>
-                                    <text id="svg_hole_spec" x="150" y="160" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">15"</text>
-                                </svg>
+                                <line x1="92" y1="165" x2="208" y2="165" stroke="#3b82f6" stroke-width="2" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>
+                                <text id="svg_hole_spec" x="150" y="160" font-family="Arial, sans-serif" font-weight="700" font-size="12" fill="#000" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">15"</text>
+                            </svg>
+                        </div>
+
+                        <!-- Karekodlar -->
+                        <div class="w-[70px] flex flex-col items-center justify-center gap-2 pl-1 shrink-0">
+                            <div class="flex flex-col items-center">
+                                <canvas id="qr_map_canvas" class="w-[48px] h-[48px]"></canvas>
+                                <span class="text-[6px] text-slate-700 font-bold mt-1 text-center leading-tight">Konuma Git</span>
                             </div>
-
-                            <!-- Karekodlar -->
-                            <div class="w-[70px] flex flex-col items-center justify-center gap-3 pl-1 shrink-0">
-                                <div class="flex flex-col items-center">
-                                    <canvas id="qr_map_canvas" class="w-[42px] h-[42px]"></canvas>
-                                    <span class="text-[6.5px] text-slate-700 font-bold mt-1 text-center leading-tight">Konuma Git</span>
-                                </div>
-                                <div class="flex flex-col items-center">
-                                    <canvas id="qr_report_canvas" class="w-[42px] h-[42px]"></canvas>
-                                    <span class="text-[6.5px] text-slate-700 font-bold mt-1 text-center leading-tight">Dijital Rapor</span>
-                                </div>
+                            <div class="flex flex-col items-center">
+                                <canvas id="qr_report_canvas" class="w-[48px] h-[48px]"></canvas>
+                                <span class="text-[6px] text-slate-700 font-bold mt-1 text-center leading-tight">Dijital Rapor</span>
                             </div>
                         </div>
                     </div>
@@ -1454,24 +1455,96 @@
             callback(canvas.toDataURL('image/png'));
         }
 
+        // URL üzerinden durumu şifreleyerek link oluşturma
+        function getStateUrl() {
+            const state = {
+                fn: document.getElementById('firm_name').value,
+                fe: document.getElementById('firm_engineer').value,
+                pc: document.getElementById('p_client').value,
+                il: document.getElementById('p_il').value,
+                ic: document.getElementById('p_ilce').value,
+                mh: document.getElementById('p_mahalle').value,
+                ad: document.getElementById('p_ada').value,
+                pa: document.getElementById('p_parsel').value,
+                dt: document.getElementById('p_tarih').value,
+                dp: document.getElementById('p_derinlik').value,
+                am: document.getElementById('p_amaci').value,
+                la: document.getElementById('p_lat').value,
+                lo: document.getElementById('p_lon').value,
+                vd: document.getElementById('v_debi').value,
+                vs: document.getElementById('v_statik').value,
+                vdn: document.getElementById('v_dinamik').value,
+                vsu: document.getElementById('v_sure').value,
+                tps: document.getElementById('tech_pipe_spec').value,
+                ths: document.getElementById('tech_hole_spec').value,
+                fdi: document.getElementById('filterDepthsInput').value,
+                li: lithologies
+            };
+            const jsonStr = JSON.stringify(state);
+            const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+            const baseUrl = window.location.href.split('#')[0];
+            return baseUrl + '#d=' + compressed;
+        }
+
+        // Link aracılığıyla şifreli durum geldiğinde verileri sayfaya doldurma
+        function loadStateFromHash() {
+            const hash = window.location.hash;
+            if(hash && hash.startsWith('#d=')) {
+                try {
+                    const compressed = hash.substring(3);
+                    const jsonStr = LZString.decompressFromEncodedURIComponent(compressed);
+                    const state = JSON.parse(jsonStr);
+
+                    if(state.fn !== undefined) document.getElementById('firm_name').value = state.fn;
+                    if(state.fe !== undefined) document.getElementById('firm_engineer').value = state.fe;
+                    if(state.pc !== undefined) document.getElementById('p_client').value = state.pc;
+                    if(state.il !== undefined) document.getElementById('p_il').value = state.il;
+                    if(state.ic !== undefined) document.getElementById('p_ilce').value = state.ic;
+                    if(state.mh !== undefined) document.getElementById('p_mahalle').value = state.mh;
+                    if(state.ad !== undefined) document.getElementById('p_ada').value = state.ad;
+                    if(state.pa !== undefined) document.getElementById('p_parsel').value = state.pa;
+                    if(state.dt !== undefined) document.getElementById('p_tarih').value = state.dt;
+                    if(state.dp !== undefined) document.getElementById('p_derinlik').value = state.dp;
+                    if(state.am !== undefined) document.getElementById('p_amaci').value = state.am;
+                    if(state.la !== undefined) document.getElementById('p_lat').value = state.la;
+                    if(state.lo !== undefined) document.getElementById('p_lon').value = state.lo;
+                    if(state.vd !== undefined) document.getElementById('v_debi').value = state.vd;
+                    if(state.vs !== undefined) document.getElementById('v_statik').value = state.vs;
+                    if(state.vdn !== undefined) document.getElementById('v_dinamik').value = state.vdn;
+                    if(state.vsu !== undefined) document.getElementById('v_sure').value = state.vsu;
+                    if(state.tps !== undefined) document.getElementById('tech_pipe_spec').value = state.tps;
+                    if(state.ths !== undefined) document.getElementById('tech_hole_spec').value = state.ths;
+                    if(state.fdi !== undefined) document.getElementById('filterDepthsInput').value = state.fdi;
+                    if(state.li !== undefined) lithologies = state.li;
+
+                    return true;
+                } catch(e) {
+                    console.error("Bağlantıdan veri yüklenemedi: ", e);
+                    return false;
+                }
+            }
+            return false;
+        }
+
         function generateQRCodes() {
             const lat = document.getElementById('p_lat').value;
             const lon = document.getElementById('p_lon').value;
             const mapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-            const reportUrl = window.location.href; // Geçerli sayfanın adresi
+            
+            const reportUrl = getStateUrl(); // Artık şifrelenmiş state linkini alıyor
 
             new QRious({
                 element: document.getElementById('qr_map_canvas'),
                 value: mapUrl,
-                size: 150,
+                size: 250,
                 level: 'M'
             });
 
             new QRious({
                 element: document.getElementById('qr_report_canvas'),
                 value: reportUrl,
-                size: 150,
-                level: 'M'
+                size: 400, // Daha yoğun veri için yüksek çözünürlük
+                level: 'L' // Daha fazla veri depolama kapasitesi
             });
         }
 
@@ -1548,10 +1621,20 @@
 
         window.onload = function() {
             initMap();
+            
+            // Eğer URL'de bir rapor durumu (hash) varsa onu yükleriz
+            const isLoadedFromHash = loadStateFromHash();
+
+            if (!isLoadedFromHash) {
+                // Linkten gelmediyse bugünün tarihini atarız
+                document.getElementById('p_tarih').valueAsDate = new Date();
+            } else {
+                updateLitoTable();
+                updateMapFromInputs(); // Haritayı yüklenen koordinata göre merkezleriz
+            }
+
             autoGenerateBoringDesign(); // Filtreyi çizim ve verilere işle
             convertToUtm();
-            // Otomatik olarak bugünün tarihini atar
-            document.getElementById('p_tarih').valueAsDate = new Date();
         }
     </script>
 </body>
