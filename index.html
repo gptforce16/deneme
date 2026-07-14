@@ -216,8 +216,8 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
-                        <input type="hidden" id="p_lat" value="39.925533">
-                        <input type="hidden" id="p_lon" value="32.866287">
+                        <input type="hidden" id="p_lat" value="">
+                        <input type="hidden" id="p_lon" value="">
 
                         <!-- Harita Ekranı -->
                         <div class="md:col-span-12">
@@ -694,18 +694,31 @@
 
         // Harita Başlatıcı
         function initMap() {
-            const initialLat = parseFloat(document.getElementById('p_lat').value) || 39.925533; // Türkiye Ortası (Ankara)
-            const initialLon = parseFloat(document.getElementById('p_lon').value) || 32.866287;
+            // Başlangıç ED50_6 UTM koordinatları (Zone 35 varsayılanı kullanılarak: Doğu 671036, Kuzey 4453273)
+            const ed50Proj = '+proj=utm +zone=35 +ellps=intl +towgs84=-84,-95,-130,0,0,0,0 +units=m +no_defs';
+            const startWgs84 = proj4(ed50Proj, proj4.WGS84, [671036, 4453273]);
+            
+            const initialLat = startWgs84[1];
+            const initialLon = startWgs84[0];
+
+            // Gizli p_lat ve p_lon değerleri boşsa UTM karşılığıyla doldur
+            if (!document.getElementById('p_lat').value) {
+                document.getElementById('p_lat').value = initialLat.toFixed(6);
+                document.getElementById('p_lon').value = initialLon.toFixed(6);
+            }
+
+            const currentLat = parseFloat(document.getElementById('p_lat').value);
+            const currentLon = parseFloat(document.getElementById('p_lon').value);
 
             map = L.map('map', {
-                center: [initialLat, initialLon],
+                center: [currentLat, currentLon],
                 zoom: 15,
                 layers: [satelliteLayer],
                 fadeAnimation: false,
                 zoomAnimation: false
             });
 
-            kuyuMarker = L.marker([initialLat, initialLon], {
+            kuyuMarker = L.marker([currentLat, currentLon], {
                 draggable: true
             }).addTo(map);
 
