@@ -500,8 +500,8 @@
                     <!-- Kuyubaşı Şeması -->
                     <div>
                         <h2 class="text-[11px] font-bold text-black border-b border-black pb-1 mb-1.5 uppercase tracking-wide">Kuyubaşı Şeması</h2>
-                        <div class="border border-black rounded p-1 flex flex-col h-[125px] bg-white items-center justify-center">
-                            <svg viewBox="0 0 300 260" class="w-full h-full py-1">
+                        <div class="border border-black rounded flex flex-col h-[135px] bg-white items-center justify-center overflow-hidden">
+                            <svg viewBox="0 10 300 235" class="w-full h-full">
                                 <defs>
                                         <pattern id="gravelPattern" width="15" height="15" patternUnits="userSpaceOnUse">
                                             <rect width="15" height="15" fill="#f8f9fa"/>
@@ -590,9 +590,9 @@
                         </div>
                     </div>
                     <!-- Karekod (Sadece Konum) -->
-                    <div class="w-[65px] flex flex-col items-center justify-center border-l border-black/50 pl-2 shrink-0">
-                        <canvas id="qr_map_canvas" class="w-[50px] h-[50px]"></canvas>
-                        <span class="text-[7px] text-black font-bold mt-1 text-center leading-tight">Konuma Git</span>
+                    <div class="w-[80px] flex flex-col items-center justify-center border-l border-black/50 pl-2 shrink-0">
+                        <canvas id="qr_map_canvas" class="w-[65px] h-[65px]"></canvas>
+                        <span class="text-[8px] text-black font-bold mt-1 text-center leading-tight">Konuma Git</span>
                     </div>
                 </div>
             </div>
@@ -1319,18 +1319,19 @@
                 ctx.fillText(d + 'm', 38, y);
             });
 
-            ctx.fillStyle = '#2563eb';
+            // Başlıklar tamamen siyah yapıldı
+            ctx.fillStyle = '#000000';
             ctx.font = 'bold 8px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText("JEOLOJİK KESİT", litoLeft + (litoWidth/2), padding - 35);
             ctx.fillText("TEÇHİZ PLANI", techLeft + (techWidth/2), padding - 35);
 
-            ctx.fillStyle = '#475569';
+            ctx.fillStyle = '#000000';
             ctx.font = 'bold 7.5px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText("Delgi: " + holeSpec, techLeft + (techWidth/2), padding - 22);
             
-            ctx.fillStyle = '#1e3a8a';
+            ctx.fillStyle = '#000000';
             ctx.fillText("Boru: " + pipeSpec, techLeft + (techWidth/2), padding - 10);
         }
 
@@ -1420,7 +1421,7 @@
             new QRious({
                 element: document.getElementById('qr_map_canvas'),
                 value: mapUrl,
-                size: 200,
+                size: 300,
                 level: 'M'
             });
         }
