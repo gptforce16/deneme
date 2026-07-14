@@ -1497,7 +1497,24 @@
 
                 // Görüntülerin DOM'a yerleşmesi için kısa bir bekleme (500ms) sonrası yazdır
                 setTimeout(() => {
+                    // PDF Dosya adını belirlemek için sayfa başlığını geçici olarak değiştiriyoruz
+                    const originalTitle = document.title;
+                    const ilce = document.getElementById('p_ilce').value.trim();
+                    const mahalle = document.getElementById('p_mahalle').value.trim();
+                    const ada = document.getElementById('p_ada').value.trim();
+                    const parsel = document.getElementById('p_parsel').value.trim();
+                    
+                    const fileNameParts = [ilce, mahalle, ada, parsel].filter(p => p !== '');
+                    if (fileNameParts.length > 0) {
+                        document.title = fileNameParts.join('_').replace(/\s+/g, '_');
+                    } else {
+                        document.title = 'Kuyu_Logu';
+                    }
+
                     window.print();
+                    
+                    // Yazdırma penceresi kapandıktan sonra başlığı eski haline getir
+                    document.title = originalTitle;
                 }, 500);
             });
         }
