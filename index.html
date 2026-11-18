@@ -1,41 +1,65 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="overflow-x-hidden">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Metraj Hesaplama Tablosu</title>
+  <title>Metraj Hazırlama Programı</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #F1F5F9;
-      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
     }
     .mono {
       font-family: 'JetBrains Mono', monospace;
       font-variant-numeric: tabular-nums;
     }
-    /* Pembe Dolgu Üzerinde Kırmızı Yazılı Hücre Stili */
+    .bg-grid-pattern {
+      background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    .text-gradient {
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-image: linear-gradient(to right, #60a5fa, #a78bfa);
+    }
+    .module-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .module-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px -10px rgba(0, 0, 0, 0.45);
+    }
+    /* Modernleştirilmiş Pembe Dolgu / Kırmızı Yazı Stili */
     .pink-red-cell {
-      background-color: #F8CBAD !important;
-      color: #FF0000 !important;
-      font-weight: 700 !important;
+      background-color: #FFF1F2 !important;
+      color: #BE123C !important;
+      font-weight: 600 !important;
       font-family: 'JetBrains Mono', monospace;
     }
     .pink-red-input {
-      background-color: #F8CBAD !important;
-      color: #FF0000 !important;
-      font-weight: 700 !important;
-      border: 1px solid #DC2626 !important;
+      background-color: #FFF1F2 !important;
+      color: #BE123C !important;
+      font-weight: 600 !important;
+      border: 1px solid #FECDD3 !important;
       font-family: 'JetBrains Mono', monospace;
+      transition: all 0.15s ease;
+    }
+    .pink-red-input:hover {
+      border-color: #FDA4AF !important;
     }
     .pink-red-input:focus {
-      outline: 2px solid #DC2626;
-      background-color: #FCE4D6 !important;
+      outline: none;
+      border-color: #E11D48 !important;
+      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+      background-color: #FFFFFF !important;
     }
     /* Excel Grid Görünümü */
     .excel-grid {
@@ -43,14 +67,15 @@
       width: 100%;
       background-color: #FFFFFF;
       font-size: 12px;
+      color: #0F172A;
     }
     .excel-grid th, .excel-grid td {
       border: 1px solid #CBD5E1;
-      padding: 4px 7px;
+      padding: 5px 8px;
       vertical-align: middle;
     }
     .excel-col-header {
-      background-color: #E2E8F0;
+      background-color: #F1F5F9;
       color: #334155;
       font-weight: 700;
       text-align: center;
@@ -59,11 +84,11 @@
       user-select: none;
     }
     .excel-row-header {
-      background-color: #E2E8F0;
+      background-color: #F1F5F9;
       color: #475569;
       font-weight: 600;
       text-align: center;
-      width: 36px;
+      width: 38px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       user-select: none;
@@ -74,59 +99,72 @@
       font-size: 10px;
       color: #2563EB;
       line-height: 1.15;
-      margin-top: 1px;
+      margin-top: 2px;
     }
     .cell-a2 {
-      background-color: #FEF3C7;
+      background-color: #F1F5F9;
       font-weight: 700;
-      color: #92400E;
+      color: #0F172A;
     }
     .row-pos-header {
       background-color: #F8FAFC;
       font-weight: 700;
     }
     .row-toplam {
-      background-color: #EFF6FF;
+      background-color: #F8FAFC;
       font-weight: 700;
+      color: #0F172A;
     }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-slate-900 text-slate-800 flex flex-col min-h-screen relative overflow-x-hidden">
 
-  <!-- ÜST BAR -->
-  <header class="bg-white border-b border-slate-300 sticky top-0 z-20">
-    <div class="max-w-[1640px] mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <span class="font-bold text-slate-900 text-sm sm:text-base">Genel ve Birim Metraj Hesaplama</span>
-        <input id="projectTitleInput" type="text" value="………...YAPIM İŞİ"
-               oninput="updateProjectTitle(this.value)"
-               class="border border-slate-300 rounded px-2.5 py-1 text-xs font-semibold text-slate-800 w-52 focus:outline-none focus:border-blue-600" />
+  <!-- ARKA PLAN GRID & IŞIK EFEKTİ (GeoLog Pro Tarzı) -->
+  <div class="fixed inset-0 bg-grid-pattern opacity-60 z-0 pointer-events-none"></div>
+  <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] md:w-[900px] md:h-[550px] bg-blue-600/10 blur-[100px] md:blur-[130px] rounded-full pointer-events-none z-0"></div>
+
+  <!-- ÜST NAVİGASYON -->
+  <nav class="relative z-30 w-full py-4 px-4 md:px-8 flex flex-wrap justify-center items-center gap-4 md:gap-6 max-w-[1640px] mx-auto border-b border-white/10">
+    <div class="flex items-center gap-3">
+      <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-900/40 text-white flex items-center justify-center border border-white/15">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+          <rect x="3" y="3" width="18" height="18" rx="3" />
+          <path d="M3 9h18" />
+          <path d="M9 21V9" />
+          <path d="M13 13h4" />
+          <path d="M13 17h4" />
+        </svg>
       </div>
-
-      <div class="flex flex-wrap items-center gap-2">
-        <label class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded border border-slate-300 cursor-pointer select-none">
-          <input type="checkbox" id="showFormulasToggle" checked onchange="renderAll()" class="rounded border-slate-400 text-blue-600" />
-          <span>Hücre Formüllerini Göster</span>
-        </label>
-
-        <button onclick="exportAllToExcel()"
-                class="px-3.5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition cursor-pointer">
-          Excel İndir (.xlsx)
-        </button>
-      </div>
+      <span class="text-lg md:text-xl font-bold text-white tracking-tight">Metraj Hazırlama Programı</span>
     </div>
-  </header>
 
-  <!-- ANA İÇERİK -->
-  <div class="max-w-[1640px] w-full mx-auto p-4 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+    <div class="flex items-center bg-slate-800/80 backdrop-blur border border-slate-700 rounded-xl px-3.5 py-2">
+      <i class="fa-solid fa-folder text-slate-400 text-xs mr-2.5"></i>
+      <input id="projectTitleInput" type="text" value="………...YAPIM İŞİ"
+             oninput="updateProjectTitle(this.value)"
+             class="bg-transparent text-xs font-bold text-white w-48 sm:w-64 focus:outline-none placeholder-slate-400 text-center sm:text-left" />
+    </div>
+
+    <button onclick="exportAllToExcel()"
+            class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-2 shadow-lg shadow-blue-600/25 cursor-pointer">
+      <i class="fa-solid fa-download"></i>
+      <span>Excel İndir (.xlsx)</span>
+    </button>
+  </nav>
+
+  <!-- ANA ÇALIŞMA ALANI -->
+  <main class="flex-grow w-full max-w-[1640px] mx-auto px-4 md:px-8 py-5 relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
     <!-- SOL PANEL: BİRİM METRAJ EKLEME VE KIRMIZI DEĞER GİRİŞLERİ (4 SÜTUN) -->
-    <aside class="lg:col-span-4 space-y-3">
-      
-      <!-- Birim Metraj Ekleme Çubuğu -->
-      <div class="bg-white border border-slate-300 rounded-lg p-3 shadow-2xs">
+    <aside class="lg:col-span-4 space-y-3.5">
+
+      <!-- Birim Metraj Ekleme Kutusu -->
+      <div class="bg-slate-800/75 backdrop-blur-md border border-slate-700/70 rounded-2xl p-3.5 shadow-xl">
         <div class="flex items-center gap-2">
-          <select id="newModuleTypeSelect" class="flex-1 border border-slate-300 rounded px-2.5 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-600">
+          <select id="newModuleTypeSelect" class="flex-1 bg-slate-900/90 border border-slate-600 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-blue-500">
             <option value="hat">Hat</option>
             <option value="hat_gomlek">Hat (Gömleklemeli)</option>
             <option value="su_alim">Su Alım Yapısı</option>
@@ -134,29 +172,37 @@
             <option value="sulama_vantuz">Sulama Aparatı+Vantuz</option>
           </select>
           <button onclick="addModuleFromDropdown()"
-                  class="px-3.5 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition cursor-pointer shrink-0">
-            + Ekle
+                  class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold text-xs shadow-md shadow-blue-600/20 transition cursor-pointer shrink-0 flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i>
+            <span>Ekle</span>
           </button>
         </div>
       </div>
 
       <!-- Eklenen Birim Metraj Kutucukları -->
-      <div id="moduleListContainer" class="space-y-2.5"></div>
+      <div id="moduleListContainer" class="space-y-3"></div>
 
     </aside>
 
     <!-- SAĞ PANEL: ORİJİNAL EXCEL YAPISINDA SEKME VE TABLOLAR (8 SÜTUN) -->
-    <main class="lg:col-span-8 bg-white border border-slate-300 rounded-lg shadow-2xs overflow-hidden flex flex-col">
-      
+    <section class="lg:col-span-8 bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden flex flex-col">
+
       <!-- Excel Sayfa Sekmeleri -->
-      <div id="sheetTabsBar" class="bg-slate-200 border-b border-slate-300 px-2 pt-1.5 flex flex-wrap items-center gap-1"></div>
+      <div id="sheetTabsBar" class="bg-slate-800 border-b border-slate-700 px-3 pt-2 flex flex-wrap items-center gap-1.5"></div>
 
       <!-- Aktif Excel Sayfası Tablosu -->
-      <div id="spreadsheetViewport" class="overflow-x-auto overflow-y-auto max-h-[82vh]"></div>
+      <div id="spreadsheetViewport" class="overflow-x-auto overflow-y-auto max-h-[80vh] bg-white"></div>
 
-    </main>
+    </section>
 
-  </div>
+  </main>
+
+  <!-- ALT BİLGİ -->
+  <footer class="relative z-20 w-full border-t border-white/10 py-3 mt-auto bg-slate-900/50 backdrop-blur-sm">
+    <div class="max-w-[1640px] mx-auto px-4 md:px-8 flex justify-center items-center">
+      <p class="text-slate-500 text-[11px] font-medium">Genel ve Birim Metraj Otomasyonu</p>
+    </div>
+  </footer>
 
   <script>
     const ST_DICT = {"ST.1": {"name": "Makine ile her derinlik her genişlik ve her cins zeminde sınaî, hendek veya temel kazısı yapılması", "unit": "metreküp"}, "ST.2": {"name": "Kazıdan çıkan malzemenin makine ile geri dolgusunun yapılması", "unit": "metreküp"}, "ST.3": {"name": "Kazıdan çıkan malzemenin makine ile geri dolgusunun yapılması (sulama ve sıkıştırma bedeli hariç) (Havuz dolgusu için)", "unit": "metreküp"}, "ST.4": {"name": "Çeşitli  kalınlıkta asfalt kesilmesi ve sökülmesi", "unit": "metreküp"}, "ST.5": {"name": "300 dozlu demirsiz beton (kırma taş ile yapılan beton)", "unit": "metreküp"}, "ST.6": {"name": "Helikopter (pervaneli) perdah yapılması", "unit": "metrekare"}, "ST.7": {"name": "Beton bordür temini ve döşenmesi", "unit": "metre"}, "ST.8": {"name": "Mevcut Parke Taşının Sökülmesi, İstiflenmesi ve Yeniden Döşenmesi", "unit": "metrekare"}, "ST.9": {"name": "Panel tel çit yapılması ve yerine konması", "unit": "metre"}, "ST.10": {"name": "2,40 birim. Yüksekliğinde betonarme direkli kafes teli ile himaye çiti yapılması", "unit": "metre"}, "ST.11": {"name": "Her türlü beton ve/veya betonarme kalıbı yapılması", "unit": "metrekare"}, "ST.12": {"name": "Kazıdan Artan Malzemenin Nakli", "unit": "metreküp"}, "ST.13": {"name": "Binek otomobil (şoförsüz) (teklif tarihi itibariyle yürürlükte yer alan brüt asgari ücretten daha az fiyat teklifinde bulunulmayacaktır.)", "unit": "ay"}, "ST.14": {"name": "Gölet ve sulama tesisi işlerinde imalatların sayısal altyapı verilerinin buski bilgi sistemleri merkez sunucusuna girilebilir şekilde hazırlanması", "unit": "kilometre"}, "ST.15": {"name": "Beton santralinde üretilen veya satın alınan ve beton pompasıyla basılan, C 16/20 basınç dayanım sınıfında, gri renkte, normal hazır beton dökülmesi (beton nakli dahil)", "unit": "metreküp"}, "ST.16": {"name": "Beton santralinde üretilen veya satın alınan ve beton pompasıyla basılan, C 25/30 basınç dayanım sınıfında, gri renkte, normal hazır beton dökülmesi (beton nakli dahil)", "unit": "metreküp"}, "ST.17": {"name": "Beton santralinde üretilen veya satın alınan ve beton pompasıyla basılan, C 30/37 basınç dayanım sınıfında, gri renkte, normal hazır beton dökülmesi (beton nakli dahil)", "unit": "metreküp"}, "ST.18": {"name": "Ø 8- ø 12 mm nervürlü beton çelik çubuğu, çubukların kesilmesi, bükülmesi ve yerine konulması", "unit": "ton"}, "ST.19": {"name": "Ø 14- ø 28 mm nervürlü beton çelik çubuğu, çubukların kesilmesi, bükülmesi ve yerine konulması", "unit": "ton"}, "ST.20": {"name": "Nervürlü Çelik Hasırın Temini ve Yerine Konulması İşçiliği (Nakliye Hariç) 3,001 - 10,000 kg/m² (10,000 kg/m²Dâhil)", "unit": "ton"}, "ST.21": {"name": "Ahşap kalıp iskelesi (4 metreye kadar, 4m dahil)", "unit": "metreküp"}, "ST.22": {"name": "Ahşap kalıp iskelesi ( yüksekliği 4.01-6.00 m)", "unit": "metreküp"}, "ST.23": {"name": "250 gr/m² ağırlıkta pp esaslı örgüsüz geotekstil keçe serilmesi", "unit": "metrekare"}, "ST.24": {"name": "500 gr/m² ağırlıkta pp esaslı örgüsüz geotekstil keçe serilmesi", "unit": "metrekare"}, "ST.25": {"name": "1000 gr/m² ağırlıkta pp esaslı örgüsüz geotekstil keçe serilmesi", "unit": "metrekare"}, "ST.26": {"name": "1,5 mm kalınlıkta, HDPE esaslı, (uv dayanımlı) jeomembran ile su yalıtımı yapılması", "unit": "metrekare"}, "ST.27": {"name": "2,0 mm kalınlıkta, HDPE esaslı, (uv dayanımlı, donatılı) jeomembran ile su yalıtımı yapılması", "unit": "metrekare"}, "ST.28": {"name": "1,5 mm kalınlıkta, LDPE esaslı, (düz tip yada sinyal tabakalı) jeomembran ile su yalıtımı yapılması", "unit": "metrekare"}, "ST.29": {"name": "2,0 mm kalınlıkta, LDPE esaslı, (düz tip yada sinyal tabakalı) jeomembran ile su yalıtımı yapılması", "unit": "metrekare"}, "ST.30": {"name": "1,5 mm kalınlıkta, Termoset EPDM esaslı, jeomembran ile su yalıtımı yapılması", "unit": "metrekare"}, "ST.31": {"name": "2,0 mm kalınlıkta, Termoset EPDM esaslı, jeomembran ile su yalıtımı yapılması", "unit": "metrekare"}, "ST.32": {"name": "Çeşitli profil demiri ve sac levhalardan münferit imalat yapılması, yerine konulması (su depoları ve benzeri)", "unit": "kilogram"}, "ST.33": {"name": "Lama ve profil demirlerden çeşitli demir işleri yapılması ve yerine konulması", "unit": "kilogram"}, "ST.34": {"name": "Motopomp'un (20 ps.) 1 saatlik ücreti", "unit": "saat"}, "ST.35": {"name": "Manometrenin temini ve yerine konulması", "unit": "adet"}, "ST.36": {"name": "Dn 50 et kal:3,65 mm dikişli galvanizli çelik boru döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.37": {"name": "Dn 80 mm et kal:4,05 mm dikişli galvanizli çelik boru döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.38": {"name": "Dn 100 mm et kal:4,5 mm dikişli galvanizli çelik boru döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.39": {"name": "Dn 150 et kal:4,50 mm düz-spiral kaynaklı çelik boru (S235jr (St37) kalite) (TS EN 10217-1) döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.40": {"name": "Dn 200 et kal:4,50 mm düz-spiral kaynaklı çelik boru (S235jr (St37) kalite) (TS EN 10217-1) döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.41": {"name": "Dn 250 et kal:4,50 mm düz-spiral kaynaklı çelik boru (S235jr (St37) kalite) (TS EN 10217-1) döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.42": {"name": "Dn 300 et kal:4,50 mm düz-spiral kaynaklı çelik boru (S235jr (St37) kalite) (TS EN 10217-1) döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.43": {"name": "Dn 350 et kal:4,50 mm düz-spiral kaynaklı çelik boru (S235jr (St37) kalite) (TS EN 10217-1) döşenmesi (boru bedeli dahil)", "unit": "metre"}, "ST.44": {"name": "Dn 100 dış çapı 114,3 mm boyuna kaynaklı et kalınlığı:3,2 mm çelik boru (içi epoksi ts en 10289),(dışı pe kaplı ts 5139) temini ve döşenmesi", "unit": "metre"}, "ST.45": {"name": "Dn 150 dış çapı 168,3 mm boyuna kaynaklı et kalınlığı:3,2 mm çelik boru (içi epoksi ts en 10289),(dışı pe kaplı ts 5139) temini ve döşenmesi", "unit": "metre"}, "ST.46": {"name": "Dn 200 dış çapı 219,1 mm boyuna kaynaklı et kalınlığı:3,2 mm çelik boru (içi epoksi ts en 10289),(dışı pe kaplı ts 5139) temini ve döşenmesi", "unit": "metre"}, "ST.47": {"name": "Ø 50 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.48": {"name": "Ø 50 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.49": {"name": "Ø 63 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.50": {"name": "Ø 63 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.51": {"name": "Ø 75 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.52": {"name": "Ø 75 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.53": {"name": "Ø 90 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.54": {"name": "Ø 90 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.55": {"name": "Ø 110 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.56": {"name": "Ø 110 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.57": {"name": "Ø 125 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.58": {"name": "Ø 125 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.59": {"name": "Ø 140 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.60": {"name": "Ø 140 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.61": {"name": "Ø 160 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.62": {"name": "Ø 160 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.63": {"name": "Ø 180 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.64": {"name": "Ø 180 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.65": {"name": "Ø 200 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.66": {"name": "Ø 200 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.67": {"name": "Ø 225 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.68": {"name": "Ø 225 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.69": {"name": "Ø 250 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.70": {"name": "Ø 250 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.71": {"name": "Ø 280 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.72": {"name": "Ø 280 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.73": {"name": "Ø 315 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.74": {"name": "Ø 315 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.75": {"name": "Ø 355 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.76": {"name": "Ø 355 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.77": {"name": "Ø 400 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.78": {"name": "Ø 400 mm pe 100 boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.79": {"name": "Ø 500 mm pe 100 boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.80": {"name": "Ø 110 mm geçme muflu pvc boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.81": {"name": "Ø 125 mm geçme muflu pvc boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.82": {"name": "Ø 140 mm geçme muflu pvc boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.83": {"name": "Ø 160 mm geçme muflu pvc boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.84": {"name": "Ø 200 mm geçme muflu pvc boru 10 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.85": {"name": "Ø 110 mm geçme muflu pvc boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.86": {"name": "Ø 125 mm geçme muflu pvc boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.87": {"name": "Ø 140 mm geçme muflu pvc boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.88": {"name": "Ø 160 mm geçme muflu pvc boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.89": {"name": "Ø 200 mm geçme muflu pvc boru 16 atü (boru bedeli ve döşenmesi dahil)", "unit": "metre"}, "ST.90": {"name": "Her çap için özel parça  Tünel tipi drenaj boruları (PVC esaslı) (TS 13492)", "unit": "kilogram"}, "ST.91": {"name": "Ø 150 mm'lik tünel tipi drenaj borusu temini ve döşenmesi", "unit": "metre"}, "ST.92": {"name": "Ø 200 mm'lik tünel tipi drenaj borusu temini ve döşenmesi", "unit": "metre"}, "ST.93": {"name": "Dış çapı 110 mm, PVC drenaj borusu döşenmesi \n(Boru bedeli dahil, baş bağlama bedeli hariç)", "unit": "metre"}, "ST.94": {"name": "Dış çapı 160 mm, PVC drenaj borusu döşenmesi \n(Boru bedeli dahil, baş bağlama bedeli hariç)", "unit": "metre"}, "ST.95": {"name": "Dış çapı 225 mm, PVC drenaj borusu döşenmesi \n(Boru bedeli dahil, baş bağlama bedeli hariç)", "unit": "metre"}, "ST.96": {"name": "Çapı 200 mm HDPE Koruge boru döşenmesi \n(SN 8, lastik conta, boru ve sızdırmazlık bedelleri dahil)", "unit": "metre"}, "ST.97": {"name": "Çapı 300 mm HDPE Koruge boru döşenmesi \n(SN 8, lastik conta, boru ve sızdırmazlık bedelleri dahil)", "unit": "metre"}, "ST.98": {"name": "Çapı 500 mm HDPE Koruge boru döşenmesi \n(SN 8, lastik conta, boru ve sızdırmazlık bedelleri dahil)", "unit": "metre"}, "ST.99": {"name": "Çapı 1000 mm HDPE Koruge boru döşenmesi \n(SN 8, lastik conta, boru ve sızdırmazlık bedelleri dahil)", "unit": "metre"}, "ST.100": {"name": "65 Ø mm, PN 16, Gövdesi sfero döküm, küresi dolu paslanmaz çelik, teflon contalı, tam geçişli, wafer bağlantılı, KÜRESEL VANALAR (TS 3148)", "unit": "adet"}, "ST.101": {"name": "80 Ø mm, PN 16, Gövdesi sfero döküm, küresi dolu paslanmaz çelik, teflon contalı, tam geçişli, wafer bağlantılı, KÜRESEL VANALAR (TS 3148)", "unit": "adet"}, "ST.102": {"name": "100 Ø mm, PN 16, Gövdesi sfero döküm, küresi dolu paslanmaz çelik, teflon contalı, tam geçişli, wafer bağlantılı, KÜRESEL VANALAR (TS 3148)", "unit": "adet"}, "ST.103": {"name": "Çapı 80 mm flanşlı kelebek vanaların (pn 16) yerleştirilmesi (paslanmaz çelik klapeli) (sferodöküm)", "unit": "adet"}, "ST.104": {"name": "Çapı ø 50 mm hızlı basınç tahliye (relief vana) hidrolik kontrol vanası (pn 16, fark basınç tahliye vana gövdesi, paslanmaz çelik körük ile basınç dengeli, flanşlı, pik döküm)", "unit": "adet"}, "ST.105": {"name": "Çapı 100 mm, 10 - 16 Atü, flatörlü vana yerleştirilmesi \n(Sfero döküm, flatörlü vana bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.106": {"name": "Çapı 150 mm, 10 - 16 Atü, flatörlü vana yerleştirilmesi \n(Sfero döküm, flatörlü vana bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.107": {"name": "Çapı 200 mm, 10 - 16 Atü, flatörlü vana yerleştirilmesi \n(Sfero döküm, flatörlü vana bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.108": {"name": "Çapı 250 mm, 10 - 16 Atü, flatörlü vana yerleştirilmesi \n(Sfero döküm, flatörlü vana bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.109": {"name": "Çapı 300 mm, 10 - 16 Atü, flatörlü vana yerleştirilmesi \n(Sfero döküm, flatörlü vana bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.110": {"name": "Çapı 350 mm, 10 - 16 Atü, flatörlü vana yerleştirilmesi \n(Sfero döküm, flatörlü vana bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.111": {"name": "Çapı 50 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.112": {"name": "Çapı 100 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.113": {"name": "Çapı 125 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.114": {"name": "Çapı 150 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.115": {"name": "Çapı 200 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.116": {"name": "Çapı 250 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.117": {"name": "Çapı 300 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.118": {"name": "Çapı 350 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.119": {"name": "Çapı 400 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.120": {"name": "Çapı 500 mm, volanlı sürgülü vanaların yerleştirilmesi (DIN 3216),(pn 16),(sfero döküm)", "unit": "adet"}, "ST.121": {"name": "Çapı 50 mm, basıncı ayarlanabilen basınç kırıcıların yerleştirilmesi (pn 25 atü ) ilgili tse standardına uygun ve ıso 9001 belgeli) (sfero döküm) (baş bağlama bedeli hariç) ( basınç kırıcı bedeli dahil )", "unit": "adet"}, "ST.122": {"name": "Çapı 100 mm, basıncı ayarlanabilen basınç kırıcıların yerleştirilmesi (pn 25 atü ) ilgili tse standardına uygun ve ıso 9001 belgeli) (sfero döküm) (baş bağlama bedeli hariç) ( basınç kırıcı bedeli dahil )", "unit": "adet"}, "ST.123": {"name": "Çapı 150 mm, basıncı ayarlanabilen basınç kırıcıların yerleştirilmesi (pn 25 atü ) ilgili tse standardına uygun ve ıso 9001 belgeli) (sfero döküm) (baş bağlama bedeli hariç) ( basınç kırıcı bedeli dahil )", "unit": "adet"}, "ST.124": {"name": "Çapı 200 mm, basıncı ayarlanabilen basınç kırıcıların yerleştirilmesi (pn 25 atü ) ilgili tse standardına uygun ve ıso 9001 belgeli) (sfero döküm) (baş bağlama bedeli hariç) ( basınç kırıcı bedeli dahil )", "unit": "adet"}, "ST.125": {"name": "Çapı 250 mm, basıncı ayarlanabilen basınç kırıcıların yerleştirilmesi (pn 25 atü ) ilgili tse standardına uygun ve ıso 9001 belgeli) (sfero döküm) (baş bağlama bedeli hariç) ( basınç kırıcı bedeli dahil )", "unit": "adet"}, "ST.126": {"name": "Çapı 300 mm, basıncı ayarlanabilen basınç kırıcıların yerleştirilmesi (pn 25 atü ) ilgili tse standardına uygun ve ıso 9001 belgeli) (sfero döküm) (baş bağlama bedeli hariç) ( basınç kırıcı bedeli dahil )", "unit": "adet"}, "ST.127": {"name": "Çapı 50 mm, çift küreli vantuzların yerleştirilmesi pn 10-16 atü (baş bağlama bedeli hariç) (vantuz bedeli dahil)", "unit": "adet"}, "ST.128": {"name": "Çapı 80 mm, çift küreli vantuzların yerleştirilmesi pn 10-16 atü (baş bağlama bedeli hariç) (vantuz bedeli dahil)", "unit": "adet"}, "ST.129": {"name": "100 mm pislik tutucuların yerleştirilmesi pn 16 (sfero döküm)(filtre: 304 kalite paslanmaz çelik)", "unit": "adet"}, "ST.130": {"name": "150 mm pislik tutucuların yerleştirilmesi pn 16 (sfero döküm)(filtre: 304 kalite paslanmaz çelik)", "unit": "adet"}, "ST.131": {"name": "200 mm pislik tutucuların yerleştirilmesi pn 16 (sfero döküm)(filtre: 304 kalite paslanmaz çelik)", "unit": "adet"}, "ST.132": {"name": "250 mm pislik tutucuların yerleştirilmesi pn 16 (sfero döküm)(filtre: 304 kalite paslanmaz çelik)", "unit": "adet"}, "ST.133": {"name": "300 mm pislik tutucuların yerleştirilmesi pn 16 (sfero döküm)(filtre: 304 kalite paslanmaz çelik)", "unit": "adet"}, "ST.134": {"name": "350 mm pislik tutucuların yerleştirilmesi pn 16 (sfero döküm)(filtre: 304 kalite paslanmaz çelik)", "unit": "adet"}, "ST.135": {"name": "Çapı 250 mm, flanşlı takma-sökme (montaj-demontaj) parçalarının montajı ( pn 10 atü ) ( flanşlı takma-sökme bedeli dahil )", "unit": "adet"}, "ST.136": {"name": "Çapı 300 mm, flanşlı takma-sökme (montaj-demontaj) parçalarının montajı ( pn 10 atü ) ( flanşlı takma-sökme bedeli dahil )", "unit": "adet"}, "ST.137": {"name": "Çapı 350 mm, flanşlı takma-sökme (montaj-demontaj) parçalarının montajı ( pn 10 atü ) ( flanşlı takma-sökme bedeli dahil )", "unit": "adet"}, "ST.138": {"name": "Dış çapı ø 50 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10)", "unit": "adet"}, "ST.139": {"name": "Dış çapı ø 63 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.140": {"name": "Dış çapı ø 75 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.141": {"name": "Dış çapı ø 90 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.142": {"name": "Dış çapı ø 110 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10)", "unit": "adet"}, "ST.143": {"name": "Dış çapı ø 125 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10)", "unit": "adet"}, "ST.144": {"name": "Dış çapı ø 140 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.145": {"name": "Dış çapı ø 160 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.146": {"name": "Dış çapı ø 180 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.147": {"name": "Dış çapı ø 200mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi  (pn 10 atü)", "unit": "adet"}, "ST.148": {"name": "Dış çapı ø 225mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.149": {"name": "Dış çapı ø 250mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.150": {"name": "Dış çapı ø 280mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.151": {"name": "Dış çapı ø 315mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.152": {"name": "Dış çapı ø 350mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.153": {"name": "Dış çapı ø 400mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.154": {"name": "Dış çapı ø 450mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.155": {"name": "Dış çapı ø 500mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.156": {"name": "Dış çapı ø 630mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 10 atü)", "unit": "adet"}, "ST.157": {"name": "Dış çapı ø 50 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.158": {"name": "Dış çapı ø 63 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.159": {"name": "Dış çapı ø 75 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.160": {"name": "Dış çapı ø 90 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.161": {"name": "Dış çapı ø 110 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.162": {"name": "Dış çapı ø 125 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.163": {"name": "Dış çapı ø 140 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.164": {"name": "Dış çapı ø 160 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.165": {"name": "Dış çapı ø 180 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.166": {"name": "Dış çapı ø 200 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.167": {"name": "Dış çapı ø 225mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.168": {"name": "Dış çapı ø 250mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.169": {"name": "Dış çapı ø 280mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.170": {"name": "Dış çapı ø 315mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.171": {"name": "Dış çapı ø 355 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.172": {"name": "Dış çapı ø 400 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.173": {"name": "Dış çapı ø 450 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.174": {"name": "Dış çapı ø 500 mm pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi (pn 16 atü)", "unit": "adet"}, "ST.175": {"name": "Dış çapı 110 mm, pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi  (pn 20 ile 25 atü)(boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.176": {"name": "Dış çapı 140 mm, pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi  (pn 20 ile 25 atü)(boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.177": {"name": "Dış çapı 160 mm, pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi  (pn 20 ile 25 atü)(boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.178": {"name": "Dış çapı 180 mm, pe100 boru ve özel parça başlarının alın kaynağı ile eklenmesi  (pn 20 ile 25 atü)(boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.179": {"name": "Dış çapı 110 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.180": {"name": "Dış çapı 125 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.181": {"name": "Dış çapı 140 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.182": {"name": "Dış çapı 160 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.183": {"name": "Dış çapı 180 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.184": {"name": "Dış çapı 200 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.185": {"name": "Dış çapı 225 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.186": {"name": "Dış çapı 250 mm, 10 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.187": {"name": "Dış çapı 110 mm, 16 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.188": {"name": "Dış çapı 125 mm, 16 atü, PE100 boru ve bağlantı elemanı başlarının elektrofüzyon kaynağı ile eklenmesi (boru ve özel parça bedeli dahil)", "unit": "adet"}, "ST.189": {"name": "Çapı 50 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.190": {"name": "Çapı 60 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.191": {"name": "Çapı 75 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.192": {"name": "Çapı 90 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.193": {"name": "Çapı 100 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.194": {"name": "Çapı 125 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.195": {"name": "Çapı 150 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.196": {"name": "Çapı 200 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.197": {"name": "Çapı 225 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.198": {"name": "Çapı 250 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.199": {"name": "Çapı 300 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.200": {"name": "Çapı 350 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.201": {"name": "Çapı 500 mm, flanşlı her çeşit boru ve özel parça başlarının bağlanması", "unit": "adet"}, "ST.202": {"name": "İç çapı 50 mm, çelik borular için flanşlı baş yapımı (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.203": {"name": "İç çapı 100 mm, çelik borular için flanşlı baş yapımı (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.204": {"name": "İç çapı 150 mm, çelik borular için flanşlı baş yapımı (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.205": {"name": "İç çapı 200 mm, çelik borular için flanşlı baş yapımı (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.206": {"name": "İç çapı 250 mm, çelik borular için flanşlı baş yapımı (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.207": {"name": "İç çapı 300 mm, çelik borular için flanşlı baş yapımı (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.208": {"name": "Dış çapı 63 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.209": {"name": "Dış çapı 75 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.210": {"name": "Dış çapı 90 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.211": {"name": "Dış çapı 110 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.212": {"name": "Dış çapı 125 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.213": {"name": "Dış çapı 140 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.214": {"name": "Dış çapı 160 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.215": {"name": "Dış çapı 180 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.216": {"name": "Dış çapı 200 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.217": {"name": "Dış çapı 225 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.218": {"name": "Dış çapı 250 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.219": {"name": "Dış çapı 280 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.220": {"name": "Dış çapı 315 mm her çeşit pe 100 boruların döşenmesi (pe 100 boru, özel parça, taşıma ve baş bağlama bedelleri hariç)", "unit": "metre"}, "ST.221": {"name": "Dış çapı 110 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.222": {"name": "Dış çapı 160 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.223": {"name": "Dış çapı 180 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.224": {"name": "Dış çapı 200 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.225": {"name": "Dış çapı 225 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.226": {"name": "Dış çapı 250 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.227": {"name": "Dış çapı 280 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.228": {"name": "Dış çapı 315 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 10)", "unit": "adet"}, "ST.229": {"name": "Dış çapı 110 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.230": {"name": "Dış çapı 160 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.231": {"name": "Dış çapı 180 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.232": {"name": "Dış çapı 200 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.233": {"name": "Dış çapı 225 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.234": {"name": "Dış çapı 250 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.235": {"name": "Dış çapı 280 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.236": {"name": "Dış çapı 315 mm ( 90°) pe100 boru dirseklerinin (pe-d) döşenmesi (baş bağlama bedeli hariç) (pn 16)", "unit": "adet"}, "ST.237": {"name": "Dış çapı 50 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.238": {"name": "Dış çapı 50 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.239": {"name": "Dış çapı 63 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.240": {"name": "Dış çapı 63 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.241": {"name": "Dış çapı 90 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.242": {"name": "Dış çapı 90 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.243": {"name": "Dış çapı 110 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.244": {"name": "Dış çapı 110 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.245": {"name": "Dış çapı 125 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.246": {"name": "Dış çapı 125 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.247": {"name": "Dış çapı 140 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.248": {"name": "Dış çapı 140 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.249": {"name": "Dış çapı 160 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.250": {"name": "Dış çapı 160 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.251": {"name": "Dış çapı 180 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.252": {"name": "Dış çapı 180 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.253": {"name": "Dış çapı 200 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.254": {"name": "Dış çapı 200 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.255": {"name": "Dış çapı 225 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.256": {"name": "Dış çapı 225 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.257": {"name": "Dış çapı 250 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.258": {"name": "Dış çapı 250 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.259": {"name": "Dış çapı 280 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.260": {"name": "Dış çapı 280 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.261": {"name": "Dış çapı 315 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.262": {"name": "Dış çapı 315 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.263": {"name": "Dış çapı 355 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.264": {"name": "Dış çapı 355 mm, pe100 flanş adaptörünün 16 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.265": {"name": "Dış çapı 500 mm, pe100 flanş adaptörünün 10 atü döşenmesi (st 44 çelik flanş parçası dahil)", "unit": "adet"}, "ST.266": {"name": "Dış çapı 110/75 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.267": {"name": "Dış çapı 110/90 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.268": {"name": "Dış çapı 125/110 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.269": {"name": "Dış çapı 140/110 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.270": {"name": "Dış çapı 140/125 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.271": {"name": "Dış çapı 160/110 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.272": {"name": "Dış çapı 160/140 mm, pe100 redüksiyon parçasının döşenmesi  pn 10", "unit": "adet"}, "ST.273": {"name": "Dış çapı 180/140 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.274": {"name": "Dış çapı 180/160 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.275": {"name": "Dış çapı 200/160 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.276": {"name": "Dış çapı 200/180 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.277": {"name": "Dış çapı 225/180 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.278": {"name": "Dış çapı 225/200 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.279": {"name": "Dış çapı 250/200 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.280": {"name": "Dış çapı 250/225 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.281": {"name": "Dış çapı 280/225 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.282": {"name": "Dış çapı 280/250 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.283": {"name": "Dış çapı 315/200 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.284": {"name": "Dış çapı 315/225 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.285": {"name": "Dış çapı 315/250 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.286": {"name": "Dış çapı 315/280 mm, pe100 redüksiyon parçasının döşenmesi pn 10", "unit": "adet"}, "ST.287": {"name": "Dış çapı 110/75 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.288": {"name": "Dış çapı 110/90 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.289": {"name": "Dış çapı 125/110 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.290": {"name": "Dış çapı 140/110 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.291": {"name": "Dış çapı 140/125 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.292": {"name": "Dış çapı 160/110 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.293": {"name": "Dış çapı 160/140 mm, pe100 redüksiyon parçasının döşenmesi  pn 16", "unit": "adet"}, "ST.294": {"name": "Dış çapı 180/140 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.295": {"name": "Dış çapı 180/160 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.296": {"name": "Dış çapı 200/160 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.297": {"name": "Dış çapı 200/180 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.298": {"name": "Dış çapı 225/180 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.299": {"name": "Dış çapı 225/200 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.300": {"name": "Dış çapı 250/200 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.301": {"name": "Dış çapı 250/225 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.302": {"name": "Dış çapı 280/225 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.303": {"name": "Dış çapı 280/250 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.304": {"name": "Dış çapı 315/250 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.305": {"name": "Dış çapı 315/280 mm, pe100 redüksiyon parçasının döşenmesi pn 16", "unit": "adet"}, "ST.306": {"name": "Dış çapı ø 110/110 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.307": {"name": "Dış çapı ø 110/110 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.308": {"name": "Dış çapı ø 125/125 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.309": {"name": "Dış çapı ø 125/125 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.310": {"name": "Dış çapı ø 140/140 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.311": {"name": "Dış çapı ø 140/140 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.312": {"name": "Dış çapı ø 160/160 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.313": {"name": "Dış çapı ø 160/160 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.314": {"name": "Dış çapı ø 180/180 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.315": {"name": "Dış çapı ø 180/180 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.316": {"name": "Dış çapı ø 200/200 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.317": {"name": "Dış çapı ø 200/200 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.318": {"name": "Dış çapı ø 225/225 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.319": {"name": "Dış çapı ø 225/225 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.320": {"name": "Dış çapı ø 250/250 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.321": {"name": "Dış çapı ø 250/250 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.322": {"name": "Dış çapı ø 280/280 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.323": {"name": "Dış çapı ø 280/280 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.324": {"name": "Dış çapı ø 315/315 mm pe 100 eşit te parçasının döşenmesi (pn 10)", "unit": "adet"}, "ST.325": {"name": "Dış çapı ø 315/315 mm pe 100 eşit te parçasının döşenmesi (pn 16)", "unit": "adet"}, "ST.326": {"name": "Dış çapı 110 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.327": {"name": "Dış çapı 110 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.328": {"name": "Dış çapı 110 / 75 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.329": {"name": "Dış çapı 110 / 75 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.330": {"name": "Dış çapı 110 / 90 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.331": {"name": "Dış çapı 110 / 90 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.332": {"name": "Dış çapı 125 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.333": {"name": "Dış çapı 125 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.334": {"name": "Dış çapı 125 / 75 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.335": {"name": "Dış çapı 125 / 75 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.336": {"name": "Dış çapı 125 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.337": {"name": "Dış çapı 125 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.338": {"name": "Dış çapı 140 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.339": {"name": "Dış çapı 140 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.340": {"name": "Dış çapı 140 / 75 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.341": {"name": "Dış çapı 140 / 75 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.342": {"name": "Dış çapı 140 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.343": {"name": "Dış çapı 140 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.344": {"name": "Dış çapı 160 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.345": {"name": "Dış çapı 160 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.346": {"name": "Dış çapı 160 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.347": {"name": "Dış çapı 160 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.348": {"name": "Dış çapı 160 / 140 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.349": {"name": "Dış çapı 160 / 140 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.350": {"name": "Dış çapı 180 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.351": {"name": "Dış çapı 180 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.352": {"name": "Dış çapı 180 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.353": {"name": "Dış çapı 180 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.354": {"name": "Dış çapı 180 / 140 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.355": {"name": "Dış çapı 180 / 140 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.356": {"name": "Dış çapı 200 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.357": {"name": "Dış çapı 200 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.358": {"name": "Dış çapı 200 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.359": {"name": "Dış çapı 200 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.360": {"name": "Dış çapı 200 / 140 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.361": {"name": "Dış çapı 200 / 140 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.362": {"name": "Dış çapı 200 / 160 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.363": {"name": "Dış çapı 200 / 160 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.364": {"name": "Dış çapı 225 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.365": {"name": "Dış çapı 225 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.366": {"name": "Dış çapı 225 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.367": {"name": "Dış çapı 225 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.368": {"name": "Dış çapı 225 / 140 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.369": {"name": "Dış çapı 225 / 140 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.370": {"name": "Dış çapı 225 / 160 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.371": {"name": "Dış çapı 225 / 160 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.372": {"name": "Dış çapı 225 / 180 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.373": {"name": "Dış çapı 225 / 180 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.374": {"name": "Dış çapı 225 / 200 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.375": {"name": "Dış çapı 225 / 200 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.376": {"name": "Dış çapı 250 / 63 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.377": {"name": "Dış çapı 250 / 63 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.378": {"name": "Dış çapı 250 / 90 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.379": {"name": "Dış çapı 250 / 90 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.380": {"name": "Dış çapı 250 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.381": {"name": "Dış çapı 250 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.382": {"name": "Dış çapı 250 / 140 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.383": {"name": "Dış çapı 250 / 140 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.384": {"name": "Dış çapı 250 / 160 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.385": {"name": "Dış çapı 250 / 160 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.386": {"name": "Dış çapı 250 / 180 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.387": {"name": "Dış çapı 250 / 180 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.388": {"name": "Dış çapı 250 / 200 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.389": {"name": "Dış çapı 250 / 200 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.390": {"name": "Dış çapı 250 / 225 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.391": {"name": "Dış çapı 250 / 225 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.392": {"name": "Dış çapı 315 / 90 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.393": {"name": "Dış çapı 315 / 90 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.394": {"name": "Dış çapı 315 / 110 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.395": {"name": "Dış çapı 315 / 110 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.396": {"name": "Dış çapı 315 / 140 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.397": {"name": "Dış çapı 315 / 140 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.398": {"name": "Dış çapı 315 / 160 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.399": {"name": "Dış çapı 315 / 160 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.400": {"name": "Dış çapı 315 / 180 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.401": {"name": "Dış çapı 315 / 180 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.402": {"name": "Dış çapı 315 / 200 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.403": {"name": "Dış çapı 315 / 200 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.404": {"name": "Dış çapı 315 / 225 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.405": {"name": "Dış çapı 315 / 225 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.406": {"name": "Dış çapı 315 / 250 mm pe100 inegal te parçasının döşenmesi pn 10", "unit": "adet"}, "ST.407": {"name": "Dış çapı 315 / 250 mm pe100 inegal te parçasının döşenmesi pn 16", "unit": "adet"}, "ST.408": {"name": "Dış çapı 110 mm, 10 atü, PE100 körtapa döşenmesi \n(PE100 körtapa bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.409": {"name": "Dış çapı 110 mm, 16 atü, PE100 körtapa döşenmesi \n(PE100 körtapa bedeli dahil, baş bağlama bedeli hariç)", "unit": "adet"}, "ST.410": {"name": "(2\") 50 mm , et kal:3,65 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.411": {"name": "(3\") 80 mm , et kal:4,05 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.412": {"name": "(4\") 100 mm , et kal:3,20 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.413": {"name": "(4\") 100 mm , et kal:4,50 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.414": {"name": "(6\") 150 mm , et kal:3,20 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.415": {"name": "(6\") 150 mm , et kal:4,50 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.416": {"name": "(8\") 200 mm , et kal:3,20 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.417": {"name": "(8\") 200 mm , et kal:4,50 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.418": {"name": "(10\") 250 mm , et kal:4,50 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.419": {"name": "(12\") 300 mm , et kal:4,50 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.420": {"name": "(14\") 350 mm , et kal:4,50 mm çelik boru başının kaynakla bağlanması", "unit": "adet"}, "ST.421": {"name": "Çapı 100 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.422": {"name": "Çapı 125 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.423": {"name": "Çapı 150 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.424": {"name": "Çapı 200 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.425": {"name": "Çapı 250 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.426": {"name": "Çapı 300 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.427": {"name": "Çapı 350 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.428": {"name": "Çapı 500 mm, krepinlerin yerleştirilmesi", "unit": "adet"}, "ST.429": {"name": "Her çapta çelik boru özel parçaların döşenmesi (özel parça bedeli ve nakliye dahil, baş bağlama bedeli hariç)", "unit": "kilogram"}, "ST.430": {"name": "Her çeşit ve her çapta pe ve pvc boru kırdöküm özel parçalarının döşenmesi (baş bağlama bedeli hariç)", "unit": "kilogram"}, "ST.431": {"name": "El ile hendek ve temel dolgusu yapılması", "unit": "metreküp"}, "ST.432": {"name": "Konkasörle kırılmış 0 - 11 mm çapında kırmataşın kompaktör ile sıkıştırılarak hendek ve temel taban ıslahı, boru tabanı yataklaması ve borunun gömleklemesi yapılması (Kırmataş satın alınarak)", "unit": "metreküp"}, "ST.433": {"name": "Konkasörle kırılmış 0 - 70 mm çapında kırmataşın kompaktör ile sıkıştırılarak hendek ve temel taban ıslahı, boru tabanı yataklaması, boru gömleklemesi veya hendek geri dolgusunun yapılması (Kırmataş satın alınarak)", "unit": "metreküp"}, "ST.434": {"name": "A (20/5) tipi 1. Kalite pvc conta ile sızdırmazlık ve genleşme derzi yapılması", "unit": "metre"}, "ST.435": {"name": "Patlayıcı madde kullanılmadan her cins demirli ve demirsiz beton inşaatın yıkılması", "unit": "metreküp"}, "ST.436": {"name": "Demir yüzeylerin bir kat antipas, iki kat sentetik boya ile boyanması", "unit": "metrekare"}, "ST.437": {"name": "Kanal kaplama betonu; tesviye, döküm ve muhafaza itina zammı (sıcaktan muhafaza su ile yapılırsa)", "unit": "metrekare"}, "ST.438": {"name": "5-10 cm (5 ile 10 cm dahil) çapındaki ağaçların kesilmesi", "unit": "adet"}, "ST.439": {"name": "11-20 cm (20 cm dahil) çapındaki ağaçların kesilmesi", "unit": "adet"}, "ST.440": {"name": "21-30 cm (30 cm dahil) çapındaki ağaçların kesilmesi", "unit": "adet"}, "ST.441": {"name": "31-40 cm (40 cm dahil) çapındaki ağaçların kesilmesi", "unit": "adet"}, "ST.442": {"name": "11-20 cm (20 cm dahil) çapındaki ağaçların sökülmesi", "unit": "adet"}, "ST.443": {"name": "21-30 cm (30 cm dahil) çapındaki ağaçların sökülmesi", "unit": "adet"}, "ST.444": {"name": "31-41 cm (40 cm dahil) çapındaki ağaçların sökülmesi", "unit": "adet"}, "ST.445": {"name": "41-50 cm (50 cm dahil) çapındaki ağaçların sökülmesi", "unit": "adet"}, "ST.446": {"name": "Hizmet yolu yapımı", "unit": "metre"}, "ST.447": {"name": "Hizmet yolu bakımı", "unit": "metre"}, "ST.448": {"name": "Göletlerde titreşimli silindirle sedde, dolgu veya gölet dolgusunun sıkıştırılması", "unit": "saat"}, "ST.449": {"name": "Göletlerde keçiayağı silindirle sedde, dolgu veya gölet dolgusunun sıkıştırması", "unit": "saat"}, "ST.450": {"name": "Barajlarda kaya ve batak zeminler hariç her cins ve klasta zeminlerin kazılması depoya konulması", "unit": "metreküp"}, "ST.451": {"name": "Göletlerde ocak veya mal. Ariyet sah. Kaya ve batak zeminler hariç her cins ve klas.zem.kazılması ve dolgu sedde veya baraj dolgusu konulması", "unit": "metreküp"}, "ST.452": {"name": "Göletlerde (kaya ve bat.zem.hariç) her cins ve klasta zemin kazılması ve yolda dolguya konulması", "unit": "metreküp"}, "ST.453": {"name": "Barajlarda yumuşak kaya zeminlerin kazılması, dolgu veya depoya konulması", "unit": "metreküp"}, "ST.454": {"name": "Barajlarda kaya kazılması, dolgu veya depoya konulması", "unit": "metreküp"}, "ST.455": {"name": "Sedde dolgu ve gölet dolgusunun sulanması", "unit": "metreküp"}, "ST.456": {"name": "Filtre malzemesi konulması(tuvenan)", "unit": "metreküp"}, "ST.457": {"name": "Filtre malzemesi konulması (elenmiş)", "unit": "metreküp"}, "ST.458": {"name": "Barajlarda konkasör kumu ve kırmataş ile filtre malzemesinin konulması", "unit": "metreküp"}, "ST.459": {"name": "Barajlarda kazılardan elde edilen kaya ile riprap yapılması", "unit": "metreküp"}, "ST.460": {"name": "100 kg Ağırlığa Kadar Ocak Taşı ile İstifli Taş Dolgu", "unit": "metreküp"}, "ST.461": {"name": "Ocak taşı ile blokaj yapılması", "unit": "metreküp"}, "ST.462": {"name": "Kayadan gayri zeminde kaplama betonu altı hazırlanması", "unit": "metrekare"}, "ST.463": {"name": "Demir kapı ve kepenk", "unit": "kilogram"}, "ST.464": {"name": "1 takım 100/80 mm özel sulama aparatının yerleştirilmesi (80 mm sferodöküm F4 tip küresel vanalar dahil) PN 16", "unit": "adet"}, "ST.465": {"name": "1 takım özel sulama aparatı (vantuz bağlantılı) yerleştirilmesi (100 mm/80 mm) (DN 80 mm  (Küresel vanalar dahil ve DN 50 mm dinamik vantuz dahil) PN 16", "unit": "adet"}, "ST.466": {"name": "Prefabrik Muayene Bacası Boyun Bileziği Elemanı (Sülfata Dayanıklı Çimentodan Yapılmış, 300 Dozlu, Buhar Kürlü) (H:0,60 m İç Çapı: 0,40 m, Et Kalınlığı:0,10 m)", "unit": "adet"}, "ST.467": {"name": "Prefabrik rogar temini ve yerine döşenmesi (iki parçalı)", "unit": "adet"}, "ST.468": {"name": "Polietilen Su Depoları 10 m³ (en az 10 mm cidar kalınlığında)", "unit": "adet"}, "ST.469": {"name": "Polietilen Su Depoları 20 m³ (en az 12 mm cidar kalınlığında)", "unit": "adet"}, "ST.470": {"name": "25 m³'lük prefabrik betonarme su deposu temini ve yerine konulması", "unit": "adet"}, "ST.471": {"name": "Patlayıcı madde kullanılmadan demirli veya demirsiz beton inşaatın yıkılması", "unit": "metreküp"}, "ST.472": {"name": "Ocak Taşi ile İstifsiz Taş Dolgu", "unit": "metreküp"}, "ST.473": {"name": "Kum çakıl nakli", "unit": "ton"}, "ST.474": {"name": "Yol için tuvenan stabilize yol temel ve alt temel malzeme nakli", "unit": "ton"}, "ST.475": {"name": "Çimento nakli", "unit": "ton"}, "ST.476": {"name": "Demir Nakli", "unit": "ton"}, "ST.477": {"name": "Çelik boru nakli", "unit": "ton"}, "ST.478": {"name": "PVC ve PE boru nakli", "unit": "ton"}, "ST.479": {"name": "Taş nakli (duvar+blokaj)", "unit": "ton"}, "ST.480": {"name": "Şantiye sınırları dışına kamyonla kazı malzemesi nakli", "unit": "ton"}, "ST.481": {"name": "Su Nakli", "unit": "metreküp"}, "ST.482": {"name": "Göletlerde Taş Nakli (Riprap + Anroşman )", "unit": "metreküp"}, "ST.483": {"name": "Kum, Çakıl , Kırma taş, Agrega Nakli (Göletlerde Filtre Malzemeler için)", "unit": "metreküp"}, "ST.484": {"name": "Kum, Çakıl , Kumlu Çakıl , Agrega Nakli (Göletlerde Tuvenan Malzemeler için)", "unit": "metreküp"}, "ST.485": {"name": "Stabilize Malzeme Nakli (Platform+Kret Üstü Stabilize İçin)", "unit": "metreküp"}, "ST.486": {"name": "Göletlerde Kazı Pozları Haricindeki Her Cins Ve Klasta Zeminlerin Kazılması Ve Depoya Konulması", "unit": "metreküp"}, "ST.487": {"name": "Temel Üstü Hafriyat Kazısı Yapılması", "unit": "metreküp"}, "ST.488": {"name": "Gölette Temel Kazısı", "unit": "metreküp"}, "ST.489": {"name": "Gölet ve Temel (Cut - Off) Dolgusu (Kazılardan elde edilen malzemeler ile)", "unit": "metreküp"}, "ST.490": {"name": "Göletlerde Kazı Pozları Haricindeki Her Cins Ve Klasta Zeminlerin Kazısının Nakli", "unit": "metreküp"}, "ST.491": {"name": "Temel Üstü Hafriyat Kazısı Nakli", "unit": "metreküp"}, "ST.492": {"name": "Gölet Temel Kazısı Nakli", "unit": "metreküp"}, "ST.493": {"name": "Dolgu Toprağı (Gölet Kazısından Temin Edilen) Nakli", "unit": "metreküp"}};
@@ -698,28 +744,28 @@
           fieldsHtml = `
             <div class="grid grid-cols-4 gap-2 mt-2">
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Boru Çapı (O1)</label>
-                <select onchange="updateModInput('${mod.id}', 'O1', this.value)" class="pink-red-input w-full rounded px-1.5 py-1 text-xs">
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Boru Çapı (O1)</label>
+                <select onchange="updateModInput('${mod.id}', 'O1', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.O1) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Atü (O2)</label>
-                <select onchange="updateModInput('${mod.id}', 'O2', this.value)" class="pink-red-input w-full rounded px-1.5 py-1 text-xs">
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Atü (O2)</label>
+                <select onchange="updateModInput('${mod.id}', 'O2', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
                   ${VALID_PRESSURES.map(p => `<option value="${p}" ${Number(mod.inputs.O2) === p ? 'selected' : ''}>${p}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Uzunluk (O3)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Uzunluk (O3)</label>
                 <input type="number" step="any" value="${mod.inputs.O3}"
                        oninput="updateModInput('${mod.id}', 'O3', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Boru Boyu (O4)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Boru Boyu (O4)</label>
                 <input type="number" step="any" value="${mod.inputs.O4}"
                        oninput="updateModInput('${mod.id}', 'O4', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
             </div>
           `;
@@ -727,44 +773,44 @@
           fieldsHtml = `
             <div class="grid grid-cols-4 gap-1.5 mt-2">
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Kazı Der. (M6)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Kazı Der. (M6)</label>
                 <input type="number" step="0.05" value="${mod.inputs.M6}"
                        oninput="updateModInput('${mod.id}', 'M6', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">h(m) (N6)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">h(m) (N6)</label>
                 <input type="number" step="0.05" value="${mod.inputs.N6}"
                        oninput="updateModInput('${mod.id}', 'N6', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">A(m) (O6)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">A(m) (O6)</label>
                 <input type="number" step="0.1" value="${mod.inputs.O6}"
                        oninput="updateModInput('${mod.id}', 'O6', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">B(m) (P6)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">B(m) (P6)</label>
                 <input type="number" step="0.1" value="${mod.inputs.P6}"
                        oninput="updateModInput('${mod.id}', 'P6', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">C(m) (Q6)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">C(m) (Q6)</label>
                 <input type="number" step="0.1" value="${mod.inputs.Q6}"
                        oninput="updateModInput('${mod.id}', 'Q6', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">D1(mm) (R6)</label>
-                <select onchange="updateModInput('${mod.id}', 'R6', this.value)" class="pink-red-input w-full rounded px-1.5 py-1 text-xs">
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">D1(mm) (R6)</label>
+                <select onchange="updateModInput('${mod.id}', 'R6', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.R6) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">D2(mm) (S6)</label>
-                <select onchange="updateModInput('${mod.id}', 'S6', this.value)" class="pink-red-input w-full rounded px-1.5 py-1 text-xs">
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">D2(mm) (S6)</label>
+                <select onchange="updateModInput('${mod.id}', 'S6', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.S6) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
@@ -774,34 +820,34 @@
           fieldsHtml = `
             <div class="grid grid-cols-3 gap-2 mt-2">
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Çap (M3)</label>
-                <select onchange="updateModInput('${mod.id}', 'M3', this.value)" class="pink-red-input w-full rounded px-1.5 py-1 text-xs">
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Çap (M3)</label>
+                <select onchange="updateModInput('${mod.id}', 'M3', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.M3) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Atü (M4)</label>
-                <select onchange="updateModInput('${mod.id}', 'M4', this.value)" class="pink-red-input w-full rounded px-1.5 py-1 text-xs">
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Atü (M4)</label>
+                <select onchange="updateModInput('${mod.id}', 'M4', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
                   ${VALID_PRESSURES.map(p => `<option value="${p}" ${Number(mod.inputs.M4) === p ? 'selected' : ''}>${p}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-slate-600 mb-0.5">Adet (M5)</label>
+                <label class="block text-[10px] font-medium text-slate-500 mb-1">Adet (M5)</label>
                 <input type="number" step="1" min="0" value="${mod.inputs.M5}"
                        oninput="updateModInput('${mod.id}', 'M5', this.value)"
-                       class="pink-red-input w-full rounded px-1.5 py-1 text-xs" />
+                       class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
             </div>
           `;
         }
 
         return `
-          <div class="bg-white border ${isCurrentTab ? 'border-blue-600 ring-1 ring-blue-500' : 'border-slate-300'} rounded-lg p-3 shadow-2xs">
+          <div class="module-card bg-white rounded-2xl p-4 shadow-lg border ${isCurrentTab ? 'border-blue-500 ring-2 ring-blue-500/25' : 'border-slate-200/80'}">
             <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-1.5 flex-1 min-w-0">
-                <span class="w-6 h-6 rounded bg-slate-800 text-white mono text-xs font-bold flex items-center justify-center shrink-0">${mod.letter}</span>
+              <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                <span class="w-7 h-7 rounded-lg ${isCurrentTab ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white'} mono text-xs font-bold flex items-center justify-center shrink-0 transition">${mod.letter}</span>
                 <select onchange="changeModuleType('${mod.id}', this.value)"
-                        class="border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-900 bg-slate-50 flex-1 min-w-0">
+                        class="border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-slate-50 flex-1 min-w-0 focus:outline-none focus:border-blue-500 transition">
                   <option value="hat" ${mod.type === "hat" ? "selected" : ""}>Hat</option>
                   <option value="hat_gomlek" ${mod.type === "hat_gomlek" ? "selected" : ""}>Hat (Gömleklemeli)</option>
                   <option value="su_alim" ${mod.type === "su_alim" ? "selected" : ""}>Su Alım Yapısı</option>
@@ -812,22 +858,24 @@
 
               <div class="flex items-center gap-1 shrink-0">
                 <button onclick="switchTab('${mod.id}')"
-                        class="px-2 py-1 rounded text-[11px] font-semibold ${isCurrentTab ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'} cursor-pointer">
-                  Sayfayı Aç
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition cursor-pointer ${isCurrentTab ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+                  Aç
                 </button>
                 <button onclick="removeModule('${mod.id}')"
                         title="Kaldır"
-                        class="px-2 py-1 rounded text-[11px] font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 cursor-pointer">
-                  Sil
+                        class="px-2 py-1.5 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                  <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
             </div>
 
-            <div class="mt-1.5 text-[11px] mono text-amber-900 bg-amber-50 border border-amber-200 rounded px-2 py-0.5 truncate" id="a2Box_${mod.id}">
-              A2: ${res.A2}
+            <div class="mt-2.5 text-[11px] mono text-slate-600 bg-slate-100/80 border border-slate-200/70 rounded-lg px-2.5 py-1 truncate" id="a2Box_${mod.id}">
+              ${res.A2}
             </div>
 
-            ${fieldsHtml}
+            <div class="pt-1">
+              ${fieldsHtml}
+            </div>
           </div>
         `;
       }).join("");
@@ -837,9 +885,7 @@
     // SAĞ PANEL: EXCEL SEKMELERİ VE BİREBİR EXCEL TABLOSU GÖRÜNÜMÜ
     // ============================================================================
     function fBadge(formulaStr) {
-      const showF = document.getElementById("showFormulasToggle").checked;
-      if (!showF || !formulaStr) return "";
-      return `<span class="formula-tag">${formulaStr}</span>`;
+      return "";
     }
 
     function renderSheetTabs(computed) {
@@ -853,7 +899,7 @@
         const active = activeTabId === t.id;
         return `
           <button onclick="switchTab('${t.id}')"
-                  class="px-3 py-1.5 rounded-t text-xs font-semibold transition cursor-pointer ${active ? 'bg-white text-blue-700 border-t border-l border-r border-slate-300 -mb-px' : 'bg-slate-100 hover:bg-slate-50 text-slate-700'}">
+                  class="px-3.5 py-2 rounded-t-xl text-xs font-bold transition cursor-pointer ${active ? 'bg-white text-slate-900 shadow-sm' : 'bg-slate-700/60 hover:bg-slate-700 text-slate-300'}">
             ${t.label}
           </button>
         `;
@@ -1784,7 +1830,7 @@
       mod.inputs[field] = Number(val);
       const computed = computeAll();
       const a2El = document.getElementById(`a2Box_${id}`);
-      if (a2El) a2El.textContent = `A2: ${computed.modResults[id].A2}`;
+      if (a2El) a2El.textContent = computed.modResults[id].A2;
       renderSheetTabs(computed);
       renderSpreadsheetViewport(computed);
     }
