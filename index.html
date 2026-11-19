@@ -37,28 +37,28 @@
       transform: translateY(-2px);
       box-shadow: 0 16px 30px -10px rgba(0, 0, 0, 0.45);
     }
-    /* Modernleştirilmiş Pembe Dolgu / Kırmızı Yazı Stili */
+    /* Dolgusuz, Siyah Yazılı Sade Girdi Stili */
     .pink-red-cell {
-      background-color: #FFF1F2 !important;
-      color: #BE123C !important;
+      background-color: #FFFFFF !important;
+      color: #000000 !important;
       font-weight: 600 !important;
       font-family: 'JetBrains Mono', monospace;
     }
     .pink-red-input {
-      background-color: #FFF1F2 !important;
-      color: #BE123C !important;
-      font-weight: 600 !important;
-      border: 1px solid #FECDD3 !important;
+      background-color: #FFFFFF !important;
+      color: #000000 !important;
+      font-weight: 500 !important;
+      border: 1px solid #CBD5E1 !important;
       font-family: 'JetBrains Mono', monospace;
       transition: all 0.15s ease;
     }
     .pink-red-input:hover {
-      border-color: #FDA4AF !important;
+      border-color: #94A3B8 !important;
     }
     .pink-red-input:focus {
       outline: none;
-      border-color: #E11D48 !important;
-      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+      border-color: #2563EB !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
       background-color: #FFFFFF !important;
     }
     /* Excel Grid Görünümü */
@@ -67,7 +67,7 @@
       width: 100%;
       background-color: #FFFFFF;
       font-size: 12px;
-      color: #0F172A;
+      color: #000000;
     }
     .excel-grid th, .excel-grid td {
       border: 1px solid #CBD5E1;
@@ -76,7 +76,7 @@
     }
     .excel-col-header {
       background-color: #F1F5F9;
-      color: #334155;
+      color: #000000;
       font-weight: 700;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
@@ -85,7 +85,7 @@
     }
     .excel-row-header {
       background-color: #F1F5F9;
-      color: #475569;
+      color: #000000;
       font-weight: 600;
       text-align: center;
       width: 38px;
@@ -104,7 +104,7 @@
     .cell-a2 {
       background-color: #F1F5F9;
       font-weight: 700;
-      color: #0F172A;
+      color: #000000;
     }
     .row-pos-header {
       background-color: #F8FAFC;
@@ -113,14 +113,14 @@
     .row-toplam {
       background-color: #F8FAFC;
       font-weight: 700;
-      color: #0F172A;
+      color: #000000;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-800 flex flex-col min-h-screen relative overflow-x-hidden">
+<body class="bg-slate-900 text-black flex flex-col min-h-screen relative overflow-x-hidden">
 
   <!-- ARKA PLAN GRID & IŞIK EFEKTİ (GeoLog Pro Tarzı) -->
   <div class="fixed inset-0 bg-grid-pattern opacity-60 z-0 pointer-events-none"></div>
@@ -128,28 +128,27 @@
 
   <!-- ÜST NAVİGASYON -->
   <nav class="relative z-30 w-full py-4 px-4 md:px-8 flex flex-wrap justify-center items-center gap-4 md:gap-6 max-w-[1640px] mx-auto border-b border-white/10">
-    <div class="flex items-center gap-3">
-      <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-900/40 text-white flex items-center justify-center border border-white/15">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-          <rect x="3" y="3" width="18" height="18" rx="3" />
-          <path d="M3 9h18" />
-          <path d="M9 21V9" />
-          <path d="M13 13h4" />
-          <path d="M13 17h4" />
-        </svg>
-      </div>
-      <span class="text-lg md:text-xl font-bold text-white tracking-tight">Metraj Hazırlama Programı</span>
+    <div class="bg-gradient-to-br from-slate-700 via-slate-800 to-slate-950 p-2.5 rounded-xl shadow-lg shadow-black/50 text-white flex items-center justify-center border border-slate-500/40" title="Metraj Hazırlama Programı">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+        <rect x="3" y="3" width="18" height="18" rx="3" />
+        <path d="M3 9h18" />
+        <path d="M9 21V9" />
+        <path d="M13 13h4" />
+        <path d="M13 17h4" />
+      </svg>
     </div>
 
     <div class="flex items-center bg-slate-800/80 backdrop-blur border border-slate-700 rounded-xl px-3.5 py-2">
       <i class="fa-solid fa-folder text-slate-400 text-xs mr-2.5"></i>
-      <input id="projectTitleInput" type="text" value="………...YAPIM İŞİ"
+      <input id="projectTitleInput" type="text" value="İşin Adı" placeholder="İşin Adı"
+             onfocus="if(this.value==='İşin Adı'){this.value=''; updateProjectTitle('');}"
+             onblur="if(this.value.trim()===''){this.value='İşin Adı'; updateProjectTitle('İşin Adı');}"
              oninput="updateProjectTitle(this.value)"
              class="bg-transparent text-xs font-bold text-white w-48 sm:w-64 focus:outline-none placeholder-slate-400 text-center sm:text-left" />
     </div>
 
     <button onclick="exportAllToExcel()"
-            class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-2 shadow-lg shadow-blue-600/25 cursor-pointer">
+            class="bg-slate-800/80 hover:bg-slate-700 backdrop-blur border border-slate-700 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center gap-2 cursor-pointer">
       <i class="fa-solid fa-download"></i>
       <span>Excel İndir (.xlsx)</span>
     </button>
@@ -172,7 +171,7 @@
             <option value="sulama_vantuz">Sulama Aparatı+Vantuz</option>
           </select>
           <button onclick="addModuleFromDropdown()"
-                  class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold text-xs shadow-md shadow-blue-600/20 transition cursor-pointer shrink-0 flex items-center gap-1.5">
+                  class="bg-slate-800/80 hover:bg-slate-700 backdrop-blur border border-slate-700 text-white px-4 py-2 rounded-xl font-semibold text-xs transition cursor-pointer shrink-0 flex items-center gap-1.5">
             <i class="fa-solid fa-plus"></i>
             <span>Ekle</span>
           </button>
@@ -221,29 +220,22 @@
       sulama_vantuz: { label: "Sulama Aparatı+Vantuz", baseSheet: "Sulama Aparatı+Vantuz" }
     };
 
-    let projectTitle = "………...YAPIM İŞİ";
+    let projectTitle = "İşin Adı";
     let activeTabId = "genel";
     let nextIdCounter = 1;
 
     function defaultInputsForType(type) {
       if (type === "hat" || type === "hat_gomlek") {
-        return { O1: 200, O2: 10, O3: 4025, O4: 12 };
+        return { O1: "", O2: "", O3: "", O4: "" };
       }
       if (type === "su_alim") {
-        return { M6: 1.5, N6: 2, O6: 2, P6: 3, Q6: 2, R6: 140, S6: 110 };
+        return { M6: "", N6: "", O6: "", P6: "", Q6: "", R6: "", S6: "" };
       }
-      return { M3: 225, M4: 10, M5: 3 };
+      return { M3: "", M4: "", M5: "" };
     }
 
-    // Başlangıçta 5 birim metraj (a, b, c, d, e) ekli gelir, kullanıcı silebilir veya aynı türden istediği kadar ekleyebilir
-    let unitModules = [
-      { id: "m1", type: "hat", inputs: defaultInputsForType("hat") },
-      { id: "m2", type: "hat_gomlek", inputs: defaultInputsForType("hat_gomlek") },
-      { id: "m3", type: "su_alim", inputs: defaultInputsForType("su_alim") },
-      { id: "m4", type: "sulama", inputs: defaultInputsForType("sulama") },
-      { id: "m5", type: "sulama_vantuz", inputs: defaultInputsForType("sulama_vantuz") }
-    ];
-    nextIdCounter = 6;
+    // Açılışta boş başlar, kullanıcı ekledikçe listelenir
+    let unitModules = [];
 
     // Harf üretici: 0->a, 1->b, 2->c ...
     function indexToLetter(idx) {
@@ -277,6 +269,7 @@
 
     function lookupTrench(dia) {
       const d = Number(dia);
+      if (!d) return { dia: 0, depth: 0, width: 0 };
       let chosen = TRENCH_LOOKUP[0];
       for (const row of TRENCH_LOOKUP) {
         if (row.dia <= d) chosen = row;
@@ -315,9 +308,9 @@
       const O1 = Number(mod.inputs.O1) || 0;
       const O2 = Number(mod.inputs.O2) || 0;
       const O3 = Number(mod.inputs.O3) || 0;
-      const O4 = Number(mod.inputs.O4) || 12;
+      const O4 = Number(mod.inputs.O4) || 0;
 
-      const A2 = `Ø${O1}-${O2} Atü HDPE Boru Döşenmesi`;
+      const A2 = (O1 && O2) ? `Ø${O1}-${O2} Atü HDPE Boru Döşenmesi` : (O1 ? `Ø${O1} HDPE Boru Döşenmesi` : MODULE_TYPE_META[mod.type].label);
       const trench = lookupTrench(O1);
       const O5 = trench.depth;
       const O6 = trench.width;
@@ -358,9 +351,9 @@
       const O1 = Number(mod.inputs.O1) || 0;
       const O2 = Number(mod.inputs.O2) || 0;
       const O3 = Number(mod.inputs.O3) || 0;
-      const O4 = Number(mod.inputs.O4) || 12;
+      const O4 = Number(mod.inputs.O4) || 0;
 
-      const A2 = `Ø${O1}-${O2} Atü HDPE Boru Döşenmesi`;
+      const A2 = (O1 && O2) ? `Ø${O1}-${O2} Atü HDPE Boru Döşenmesi` : (O1 ? `Ø${O1} HDPE Boru Döşenmesi` : MODULE_TYPE_META[mod.type].label);
       const trench = lookupTrench(O1);
       const O5 = trench.depth;
       const O6 = trench.width;
@@ -408,8 +401,8 @@
       const O6 = Number(mod.inputs.O6) || 0;
       const P6 = Number(mod.inputs.P6) || 0;
       const Q6 = Number(mod.inputs.Q6) || 0;
-      const R6 = Number(mod.inputs.R6) || 140;
-      const S6 = Number(mod.inputs.S6) || 110;
+      const R6 = Number(mod.inputs.R6) || 0;
+      const S6 = Number(mod.inputs.S6) || 0;
 
       const A2 = "SU ALIM YAPISI";
       const F6 = O6 + P6 + Q6;
@@ -570,11 +563,11 @@
     }
 
     function calcSulamaModule(mod, isVantuz) {
-      const M3 = Number(mod.inputs.M3) || 225;
-      const M4 = Number(mod.inputs.M4) || 10;
+      const M3 = Number(mod.inputs.M3) || 0;
+      const M4 = Number(mod.inputs.M4) || 0;
       const M5 = Number(mod.inputs.M5) || 0;
 
-      const A2 = `Ø${M3} HAT ÜZERİNDE SULAMA APARATI DÖŞENMESİ`;
+      const A2 = M3 ? `Ø${M3} HAT ÜZERİNDE SULAMA APARATI DÖŞENMESİ` : MODULE_TYPE_META[mod.type].label;
       const pMain = lookupPipe(M3, M4);
       const p110 = lookupPipe(110, M4);
 
@@ -728,7 +721,7 @@
       const container = document.getElementById("moduleListContainer");
       if (unitModules.length === 0) {
         container.innerHTML = `
-          <div class="bg-white border border-slate-300 rounded-lg p-4 text-center text-xs text-slate-500">
+          <div class="bg-white border border-slate-300 rounded-lg p-4 text-center text-xs text-black">
             Henüz birim metraj eklenmedi. Yukarıdaki açılır listeden seçip <strong>+ Ekle</strong> butonuna basın.
           </div>
         `;
@@ -744,26 +737,28 @@
           fieldsHtml = `
             <div class="grid grid-cols-4 gap-2 mt-2">
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Boru Çapı (O1)</label>
-                <select onchange="updateModInput('${mod.id}', 'O1', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
+                <label class="block text-[11px] font-medium text-black mb-1">Boru Çapı</label>
+                <select onchange="updateModInput('${mod.id}', 'O1', this.value)" class="pink-red-input w-full rounded-lg px-2 py-1.5 text-xs">
+                  <option value="" ${mod.inputs.O1 === "" ? 'selected' : ''}>Seçiniz</option>
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.O1) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Atü (O2)</label>
-                <select onchange="updateModInput('${mod.id}', 'O2', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
+                <label class="block text-[11px] font-medium text-black mb-1">Atü</label>
+                <select onchange="updateModInput('${mod.id}', 'O2', this.value)" class="pink-red-input w-full rounded-lg px-2 py-1.5 text-xs">
+                  <option value="" ${mod.inputs.O2 === "" ? 'selected' : ''}>Seçiniz</option>
                   ${VALID_PRESSURES.map(p => `<option value="${p}" ${Number(mod.inputs.O2) === p ? 'selected' : ''}>${p}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Uzunluk (O3)</label>
-                <input type="number" step="any" value="${mod.inputs.O3}"
+                <label class="block text-[11px] font-medium text-black mb-1">Uzunluk</label>
+                <input type="number" step="any" value="${mod.inputs.O3}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'O3', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Boru Boyu (O4)</label>
-                <input type="number" step="any" value="${mod.inputs.O4}"
+                <label class="block text-[11px] font-medium text-black mb-1">Boru Boyu</label>
+                <input type="number" step="any" value="${mod.inputs.O4}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'O4', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
@@ -771,46 +766,48 @@
           `;
         } else if (mod.type === "su_alim") {
           fieldsHtml = `
-            <div class="grid grid-cols-4 gap-1.5 mt-2">
+            <div class="grid grid-cols-4 gap-2 mt-2">
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Kazı Der. (M6)</label>
-                <input type="number" step="0.05" value="${mod.inputs.M6}"
+                <label class="block text-[11px] font-medium text-black mb-1">Kazı Derinliği</label>
+                <input type="number" step="0.05" value="${mod.inputs.M6}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'M6', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">h(m) (N6)</label>
-                <input type="number" step="0.05" value="${mod.inputs.N6}"
+                <label class="block text-[11px] font-medium text-black mb-1">h(m)</label>
+                <input type="number" step="0.05" value="${mod.inputs.N6}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'N6', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">A(m) (O6)</label>
-                <input type="number" step="0.1" value="${mod.inputs.O6}"
+                <label class="block text-[11px] font-medium text-black mb-1">A(m)</label>
+                <input type="number" step="0.1" value="${mod.inputs.O6}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'O6', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">B(m) (P6)</label>
-                <input type="number" step="0.1" value="${mod.inputs.P6}"
+                <label class="block text-[11px] font-medium text-black mb-1">B(m)</label>
+                <input type="number" step="0.1" value="${mod.inputs.P6}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'P6', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">C(m) (Q6)</label>
-                <input type="number" step="0.1" value="${mod.inputs.Q6}"
+                <label class="block text-[11px] font-medium text-black mb-1">C(m)</label>
+                <input type="number" step="0.1" value="${mod.inputs.Q6}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'Q6', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">D1(mm) (R6)</label>
-                <select onchange="updateModInput('${mod.id}', 'R6', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
+                <label class="block text-[11px] font-medium text-black mb-1">D1(mm)</label>
+                <select onchange="updateModInput('${mod.id}', 'R6', this.value)" class="pink-red-input w-full rounded-lg px-2 py-1.5 text-xs">
+                  <option value="" ${mod.inputs.R6 === "" ? 'selected' : ''}>Seçiniz</option>
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.R6) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">D2(mm) (S6)</label>
-                <select onchange="updateModInput('${mod.id}', 'S6', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
+                <label class="block text-[11px] font-medium text-black mb-1">D2(mm)</label>
+                <select onchange="updateModInput('${mod.id}', 'S6', this.value)" class="pink-red-input w-full rounded-lg px-2 py-1.5 text-xs">
+                  <option value="" ${mod.inputs.S6 === "" ? 'selected' : ''}>Seçiniz</option>
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.S6) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
@@ -820,20 +817,22 @@
           fieldsHtml = `
             <div class="grid grid-cols-3 gap-2 mt-2">
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Çap (M3)</label>
-                <select onchange="updateModInput('${mod.id}', 'M3', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
+                <label class="block text-[11px] font-medium text-black mb-1">Çap</label>
+                <select onchange="updateModInput('${mod.id}', 'M3', this.value)" class="pink-red-input w-full rounded-lg px-2 py-1.5 text-xs">
+                  <option value="" ${mod.inputs.M3 === "" ? 'selected' : ''}>Seçiniz</option>
                   ${VALID_DIAMETERS.map(d => `<option value="${d}" ${Number(mod.inputs.M3) === d ? 'selected' : ''}>${d}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Atü (M4)</label>
-                <select onchange="updateModInput('${mod.id}', 'M4', this.value)" class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs">
+                <label class="block text-[11px] font-medium text-black mb-1">Atü</label>
+                <select onchange="updateModInput('${mod.id}', 'M4', this.value)" class="pink-red-input w-full rounded-lg px-2 py-1.5 text-xs">
+                  <option value="" ${mod.inputs.M4 === "" ? 'selected' : ''}>Seçiniz</option>
                   ${VALID_PRESSURES.map(p => `<option value="${p}" ${Number(mod.inputs.M4) === p ? 'selected' : ''}>${p}</option>`).join('')}
                 </select>
               </div>
               <div>
-                <label class="block text-[10px] font-medium text-slate-500 mb-1">Adet (M5)</label>
-                <input type="number" step="1" min="0" value="${mod.inputs.M5}"
+                <label class="block text-[11px] font-medium text-black mb-1">Adet</label>
+                <input type="number" step="1" min="0" value="${mod.inputs.M5}" placeholder=""
                        oninput="updateModInput('${mod.id}', 'M5', this.value)"
                        class="pink-red-input w-full rounded-lg px-2.5 py-1.5 text-xs" />
               </div>
@@ -844,10 +843,9 @@
         return `
           <div class="module-card bg-white rounded-2xl p-4 shadow-lg border ${isCurrentTab ? 'border-blue-500 ring-2 ring-blue-500/25' : 'border-slate-200/80'}">
             <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                <span class="w-7 h-7 rounded-lg ${isCurrentTab ? 'bg-blue-600 text-white' : 'bg-slate-800 text-white'} mono text-xs font-bold flex items-center justify-center shrink-0 transition">${mod.letter}</span>
+              <div class="flex items-center gap-2 flex-1 min-w-0">
                 <select onchange="changeModuleType('${mod.id}', this.value)"
-                        class="border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-800 bg-slate-50/70 hover:bg-slate-50 flex-1 min-w-0 focus:outline-none focus:border-blue-500 transition">
+                        class="border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-black bg-white hover:bg-slate-50 flex-1 min-w-0 focus:outline-none focus:border-blue-500 transition">
                   <option value="hat" ${mod.type === "hat" ? "selected" : ""}>Hat</option>
                   <option value="hat_gomlek" ${mod.type === "hat_gomlek" ? "selected" : ""}>Hat (Gömleklemeli)</option>
                   <option value="su_alim" ${mod.type === "su_alim" ? "selected" : ""}>Su Alım Yapısı</option>
@@ -858,18 +856,18 @@
 
               <div class="flex items-center gap-1 shrink-0">
                 <button onclick="switchTab('${mod.id}')"
-                        class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition cursor-pointer ${isCurrentTab ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+                        class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition cursor-pointer ${isCurrentTab ? 'bg-blue-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-black'}">
                   Aç
                 </button>
                 <button onclick="removeModule('${mod.id}')"
                         title="Kaldır"
-                        class="px-2 py-1.5 rounded-lg text-[11px] font-semibold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                        class="px-2 py-1.5 rounded-lg text-[11px] font-semibold text-black hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
             </div>
 
-            <div class="mt-2.5 text-[11px] mono text-slate-600 bg-slate-100/80 border border-slate-200/70 rounded-lg px-2.5 py-1 truncate" id="a2Box_${mod.id}">
+            <div class="mt-2.5 text-[11px] mono text-black bg-slate-100/80 border border-slate-200/70 rounded-lg px-2.5 py-1 truncate" id="a2Box_${mod.id}">
               ${res.A2}
             </div>
 
@@ -892,14 +890,14 @@
       const bar = document.getElementById("sheetTabsBar");
       const tabs = [
         { id: "genel", label: "Genel Metraj" },
-        ...unitModules.map(m => ({ id: m.id, label: `${m.letter} • ${m.sheetName}` }))
+        ...unitModules.map(m => ({ id: m.id, label: m.sheetName }))
       ];
 
       bar.innerHTML = tabs.map(t => {
         const active = activeTabId === t.id;
         return `
           <button onclick="switchTab('${t.id}')"
-                  class="px-3.5 py-2 rounded-t-xl text-xs font-bold transition cursor-pointer ${active ? 'bg-white text-slate-900 shadow-sm' : 'bg-slate-700/60 hover:bg-slate-700 text-slate-300'}">
+                  class="px-3.5 py-2 rounded-t-xl text-xs font-bold transition cursor-pointer ${active ? 'bg-white text-black shadow-sm' : 'bg-slate-700/60 hover:bg-slate-700 text-slate-300'}">
             ${t.label}
           </button>
         `;
@@ -911,13 +909,13 @@
         <tr>
           <td class="excel-row-header">1</td>
           <td></td><td></td>
-          <td class="font-bold text-slate-900">${projectTitle}</td>
+          <td class="font-bold text-black">${projectTitle}</td>
           <td></td><td></td>
         </tr>
         <tr>
           <td class="excel-row-header">2</td>
           <td></td><td></td>
-          <td class="font-bold text-slate-900">GENEL METRAJ TABLOSU</td>
+          <td class="font-bold text-black">GENEL METRAJ TABLOSU</td>
           <td></td><td></td>
         </tr>
         <tr>
@@ -940,7 +938,7 @@
           <tr class="row-pos-header">
             <td class="excel-row-header">${b.mainRow}</td>
             <td class="text-center mono">${b.sira}${fBadge(`=IF(ISBLANK(E${b.mainRow})," ",COUNTA($E$5:E${b.mainRow}))`)}</td>
-            <td class="mono text-blue-700">${b.st}</td>
+            <td class="mono text-black">${b.st}</td>
             <td>${b.name}${fBadge(`=VLOOKUP(B${b.mainRow},'BİRİM FİYATLAR'!A:O,3,FALSE)`)}</td>
             <td class="text-right mono">${fmt(b.roundedQty, 3)}${fBadge(`=ROUNDUP(D${b.totalRow},0)`)}</td>
             <td class="text-center">${b.unit}${fBadge(`=VLOOKUP(B${b.mainRow},'BİRİM FİYATLAR'!A:O,4,FALSE)`)}</td>
@@ -953,12 +951,12 @@
             <tr>
               <td class="excel-row-header">${sr.excelRow}</td>
               <td></td>
-              <td class="text-center mono text-xs text-slate-400">${sr.letter}</td>
-              <td class="pl-4 font-medium text-slate-800">
+              <td></td>
+              <td class="pl-4 font-medium text-black">
                 ${sr.a2Value}
                 ${fBadge(sr.a2Formula)}
               </td>
-              <td class="text-right mono font-medium text-slate-800">
+              <td class="text-right mono font-medium text-black">
                 ${fmt(sr.qty, 3)}
                 ${fBadge(sr.qtyFormula)}
               </td>
@@ -1077,7 +1075,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">19</td>
               <td class="text-center mono">1</td>
-              <td class="mono text-blue-700">ST.1</td>
+              <td class="mono text-black">ST.1</td>
               <td colspan="7">${i19.name}${fBadge("=VLOOKUP(B19,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L19, 3)}${fBadge("=C20*E20*G20")}</td>
               <td class="text-center">${i19.unit}${fBadge("=VLOOKUP(B19,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1097,7 +1095,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">22</td>
               <td class="text-center mono">2</td>
-              <td class="mono text-blue-700">ST.2</td>
+              <td class="mono text-black">ST.2</td>
               <td colspan="7">${i22.name}${fBadge("=VLOOKUP(B22,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L22, 3)}${fBadge("=SUM(I23:I24)")}</td>
               <td class="text-center">${i22.unit}${fBadge("=VLOOKUP(B22,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1130,7 +1128,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">26</td>
               <td class="text-center mono">3</td>
-              <td class="mono text-blue-700">${res.B26}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:T,4,FALSE)')}</td>
+              <td class="mono text-black">${res.B26}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:T,4,FALSE)')}</td>
               <td colspan="7">${i26.name}${fBadge("=VLOOKUP(B26,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L26, 3)}${fBadge("=O3")}</td>
               <td class="text-center">${i26.unit}${fBadge("=VLOOKUP(B26,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1139,7 +1137,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">29</td>
               <td class="text-center mono">4</td>
-              <td class="mono text-blue-700">${res.B29}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:U,5,FALSE)')}</td>
+              <td class="mono text-black">${res.B29}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:U,5,FALSE)')}</td>
               <td colspan="7">${i29.name}${fBadge("=VLOOKUP(B29,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L29, 3)}${fBadge("=ROUNDUP(C30/E30,0)")}</td>
               <td class="text-center">${i29.unit}${fBadge("=VLOOKUP(B29,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1158,7 +1156,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">32</td>
               <td class="text-center mono">5</td>
-              <td class="mono text-blue-700">ST.478</td>
+              <td class="mono text-black">ST.478</td>
               <td colspan="7">${i32.name}${fBadge("=VLOOKUP(B32,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L32, 3)}${fBadge("=C33*E33/G33")}</td>
               <td class="text-center">${i32.unit}${fBadge("=VLOOKUP(B32,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1262,7 +1260,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">19</td>
               <td class="text-center mono">1</td>
-              <td class="mono text-blue-700">ST.1</td>
+              <td class="mono text-black">ST.1</td>
               <td colspan="7">${i19.name}${fBadge("=VLOOKUP(B19,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L19, 3)}${fBadge("=C20*E20*G20")}</td>
               <td class="text-center">${i19.unit}${fBadge("=VLOOKUP(B19,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1282,7 +1280,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">22</td>
               <td class="text-center mono">2</td>
-              <td class="mono text-blue-700">ST.432</td>
+              <td class="mono text-black">ST.432</td>
               <td colspan="7">${i22.name}${fBadge("=VLOOKUP(B22,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L22, 3)}${fBadge("=SUM(I23:I24)")}</td>
               <td class="text-center">${i22.unit}${fBadge("=VLOOKUP(B22,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1315,7 +1313,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">26</td>
               <td class="text-center mono">3</td>
-              <td class="mono text-blue-700">ST.2</td>
+              <td class="mono text-black">ST.2</td>
               <td colspan="7">${i26.name}${fBadge("=VLOOKUP(B26,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L26, 3)}${fBadge("=C27*E27*G27")}</td>
               <td class="text-center">${i26.unit}${fBadge("=VLOOKUP(B26,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1335,7 +1333,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">29</td>
               <td class="text-center mono">4</td>
-              <td class="mono text-blue-700">${res.B29}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:T,4,FALSE)')}</td>
+              <td class="mono text-black">${res.B29}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:T,4,FALSE)')}</td>
               <td colspan="7">${i29.name}${fBadge("=VLOOKUP(B29,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L29, 3)}${fBadge("=O3")}</td>
               <td class="text-center">${i29.unit}${fBadge("=VLOOKUP(B29,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1344,7 +1342,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">32</td>
               <td class="text-center mono">5</td>
-              <td class="mono text-blue-700">${res.B32}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:U,5,FALSE)')}</td>
+              <td class="mono text-black">${res.B32}${fBadge('=VLOOKUP(CONCATENATE(O1," / ",O2),Q:U,5,FALSE)')}</td>
               <td colspan="7">${i32.name}${fBadge("=VLOOKUP(B32,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L32, 3)}${fBadge("=ROUNDUP(C33/E33,0)")}</td>
               <td class="text-center">${i32.unit}${fBadge("=VLOOKUP(B32,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1363,7 +1361,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">35</td>
               <td class="text-center mono">6</td>
-              <td class="mono text-blue-700">ST.478</td>
+              <td class="mono text-black">ST.478</td>
               <td colspan="7">${i35.name}${fBadge("=VLOOKUP(B35,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L35, 3)}${fBadge("=C36*E36/G36")}</td>
               <td class="text-center">${i35.unit}${fBadge("=VLOOKUP(B35,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1383,7 +1381,7 @@
             <tr class="row-pos-header">
               <td class="excel-row-header">38</td>
               <td class="text-center mono">7</td>
-              <td class="mono text-blue-700">ST.473</td>
+              <td class="mono text-black">ST.473</td>
               <td colspan="7">${i38.name}${fBadge("=VLOOKUP(B38,'BİRİM FİYATLAR'!A:O,3,FALSE)")}</td>
               <td class="text-right mono">${fmt(res.L38, 3)}${fBadge("=C39*E39")}</td>
               <td class="text-center">${i38.unit}${fBadge("=VLOOKUP(B38,'BİRİM FİYATLAR'!A:O,4,FALSE)")}</td>
@@ -1474,7 +1472,7 @@
           <tr class="row-pos-header">
             <td class="excel-row-header">${block.rMain}</td>
             <td class="text-center mono">${block.sira}</td>
-            <td class="mono text-blue-700">${block.st}${fBadge(block.stF)}</td>
+            <td class="mono text-black">${block.st}${fBadge(block.stF)}</td>
             <td colspan="6">${info.name}${fBadge(`=VLOOKUP(B${block.rMain},'BİRİM FİYATLAR'!A:O,3,FALSE)`)}</td>
             <td class="text-right mono">${fmt(block.jVal, 3)}${fBadge(block.jF)}</td>
             <td class="text-center">${info.unit}${fBadge(`=VLOOKUP(B${block.rMain},'BİRİM FİYATLAR'!A:O,4,FALSE)`)}</td>
@@ -1665,7 +1663,7 @@
           <tr class="row-pos-header">
             <td class="excel-row-header">${block.rMain}</td>
             <td class="text-center mono">${block.sira}</td>
-            <td class="mono text-blue-700">${block.st}${fBadge(block.stF)}</td>
+            <td class="mono text-black">${block.st}${fBadge(block.stF)}</td>
             <td colspan="6">${info.name}${fBadge(`=VLOOKUP(B${block.rMain},'BİRİM FİYATLAR'!A:O,3,FALSE)`)}</td>
             <td class="text-right mono">${fmt(block.jVal, 3)}${fBadge(block.jF)}</td>
             <td class="text-center">${info.unit}${fBadge(`=VLOOKUP(B${block.rMain},'BİRİM FİYATLAR'!A:O,4,FALSE)`)}</td>
@@ -1730,7 +1728,7 @@
           </table>
 
           <div class="p-3 bg-slate-50 border-t border-slate-300">
-            <div class="text-xs font-bold text-slate-800 mb-1.5">Demir Metrajı (N19:R40)</div>
+            <div class="text-xs font-bold text-black mb-1.5">Demir Metrajı (N19:R40)</div>
             <table class="excel-grid max-w-2xl">
               <thead>
                 <tr>
@@ -1827,7 +1825,7 @@
     function updateModInput(id, field, val) {
       const mod = unitModules.find(m => m.id === id);
       if (!mod) return;
-      mod.inputs[field] = Number(val);
+      mod.inputs[field] = val === "" ? "" : Number(val);
       const computed = computeAll();
       const a2El = document.getElementById(`a2Box_${id}`);
       if (a2El) a2El.textContent = computed.modResults[id].A2;
@@ -1841,7 +1839,7 @@
     }
 
     function updateProjectTitle(val) {
-      projectTitle = val || "………...YAPIM İŞİ";
+      projectTitle = val;
       const computed = computeAll();
       renderSpreadsheetViewport(computed);
     }
