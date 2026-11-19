@@ -687,8 +687,7 @@
         const mainRow = currentExcelRow;
         const firstSubRow = mainRow + 1;
         const lastSubRow = mainRow + item.subRows.length;
-        const totalRow = lastSubRow + 1;
-        currentExcelRow = totalRow + 1;
+        currentExcelRow = lastSubRow + 1;
 
         const exactTotal = item.subRows.reduce((s, r) => s + r.qty, 0);
         const roundedQty = excelRoundUp(exactTotal);
@@ -701,7 +700,6 @@
           mainRow,
           firstSubRow,
           lastSubRow,
-          totalRow,
           subRows: item.subRows.map((sr, sIdx) => ({
             ...sr,
             excelRow: firstSubRow + sIdx
@@ -940,7 +938,7 @@
             <td class="text-center mono">${b.sira}${fBadge(`=IF(ISBLANK(E${b.mainRow})," ",COUNTA($E$5:E${b.mainRow}))`)}</td>
             <td class="mono text-black">${b.st}</td>
             <td>${b.name}${fBadge(`=VLOOKUP(B${b.mainRow},'BİRİM FİYATLAR'!A:O,3,FALSE)`)}</td>
-            <td class="text-right mono">${fmt(b.roundedQty, 3)}${fBadge(`=ROUNDUP(D${b.totalRow},0)`)}</td>
+            <td class="text-right mono">${fmt(b.roundedQty, 3)}${fBadge(`=ROUNDUP(SUM(D${b.firstSubRow}:D${b.lastSubRow}),0)`)}</td>
             <td class="text-center">${b.unit}${fBadge(`=VLOOKUP(B${b.mainRow},'BİRİM FİYATLAR'!A:O,4,FALSE)`)}</td>
           </tr>
         `;
@@ -965,17 +963,7 @@
           `;
         });
 
-        // TOPLAM Satırı
-        rowsHtml += `
-          <tr class="row-toplam">
-            <td class="excel-row-header">${b.totalRow}</td>
-            <td></td>
-            <td></td>
-            <td class="font-bold">TOPLAM</td>
-            <td class="text-right mono">${fmt(b.exactTotal, 3)}${fBadge(`=SUM(D${b.firstSubRow}:D${b.lastSubRow})`)}</td>
-            <td></td>
-          </tr>
-        `;
+
       });
 
       return `
@@ -1965,7 +1953,7 @@
         setCell(ws, b.mainRow, 1, b.sira, `=IF(ISBLANK(E${b.mainRow})," ",COUNTA($E$5:E${b.mainRow}))`, "n");
         setCell(ws, b.mainRow, 2, b.st);
         setCell(ws, b.mainRow, 3, b.name, `=VLOOKUP(B${b.mainRow},AF:AH,2,FALSE)`, "s");
-        setCell(ws, b.mainRow, 4, b.roundedQty, `=ROUNDUP(D${b.totalRow},0)`, "n");
+        setCell(ws, b.mainRow, 4, b.roundedQty, `=ROUNDUP(SUM(D${b.firstSubRow}:D${b.lastSubRow}),0)`, "n");
         setCell(ws, b.mainRow, 5, b.unit, `=VLOOKUP(B${b.mainRow},AF:AH,3,FALSE)`, "s");
 
         // Alt satırlar (A2 hücre taşıması + miktar hücre taşıması)
@@ -1974,10 +1962,7 @@
           setCell(ws, sr.excelRow, 4, Number(sr.qty.toFixed(4)), sr.qtyFormula, "n");
         });
 
-        // TOPLAM satırı
-        setCell(ws, b.totalRow, 3, "TOPLAM");
-        setCell(ws, b.totalRow, 4, Number(b.exactTotal.toFixed(4)), `=SUM(D${b.firstSubRow}:D${b.lastSubRow})`, "n");
-        lastRow = b.totalRow + 2;
+        lastRow = b.lastSubRow + 2;
       });
 
       finalizeSheetRange(ws, Math.max(lastRow, 500), 34);
